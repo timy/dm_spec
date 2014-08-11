@@ -1,0 +1,95 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+directions = [
+    [ 1,  0 ], [ 0,  1 ],
+
+    [ 2,  0 ], [ 0,  2 ],
+    [ 1,  1 ], [ 1, -1 ],
+
+    [ 3,  0 ], [ 0,  3 ],
+    [ 1,  2 ], [ 2,  1 ],
+    [ 1, -2 ], [-2,  1 ],
+
+    [ 4,  0 ], [ 0,  4 ],
+    [ 1,  3 ], [ 3,  1 ],
+    [ 1, -3 ], [-3,  1 ],
+    [ 2,  2 ], [ 2, -2 ],
+
+    [ 5,  0 ], [ 0,  5 ],
+    [ 1,  4 ], [ 4,  1 ],
+    [ 1, -4 ], [-4,  1 ],
+    [ 2,  3 ], [ 3,  2 ],
+    [ 2, -3 ], [-3,  2 ],
+
+
+    [-1,  0 ], [ 0, -1 ],
+
+    [-2,  0 ], [ 0, -2 ],
+    [-1, -1 ], [-1,  1 ],
+
+    [-3,  0 ], [ 0, -3 ],
+    [-1, -2 ], [-2, -1 ],
+    [-1,  2 ], [ 2, -1 ],
+
+    [-4,  0 ], [ 0, -4 ],
+    [-1, -3 ], [-3, -1 ],
+    [-1,  3 ], [ 3, -1 ],
+    [-2, -2 ], [-2,  2 ],
+
+    [-5,  0 ], [ 0, -5 ],
+    [-1, -4 ], [-4, -1 ],
+    [-1,  4 ], [ 4, -1 ],
+    [-2, -3 ], [-3, -2 ],
+    [-2,  3 ], [ 3, -2 ],
+
+    [ 0,  0 ]
+]
+
+font_title = {'family' : 'serif',
+        'weight' : 'normal',
+        'size'   : 18,}
+font_label = {
+        'weight' : 'normal',
+        'size'   : 16,}
+
+###########################
+def idx_ppar( directions, idx, re, coo ):
+    re_im = ["Re", "Im"]
+    cood = ["x", "y", "z"]
+    return [ directions.index(idx) * 6 + coo * 2 + re + 1, 
+             "%s (%s) in %s-axis" % 
+             ( re_im[re], ', '.join(map(str, idx)), cood[coo] ) ]
+
+def plot_data( data, data_array, i_file=-1 ):
+    t = data[:,0]
+    for i_data in data_array:
+        if i_file < 0:
+            legend.append( "%s" % i_data[1] )
+        else:
+            legend.append( "%d:%s" % (i_file, i_data[1]) )
+        handle.append( ax.plot(t, data[:,i_data[0]], marker='.')[0] )
+
+def plot_files( file_array, data_array ):
+    for i_file, file_name in enumerate( file_array ):
+        data = np.loadtxt( file_name )
+        plot_data( data, data_array, i_file=i_file )
+
+
+fig = plt.figure()
+ax = fig.add_subplot( 1, 1, 1 )
+handle, legend = [], []
+
+data_idx = [ idx_ppar( directions, [-2, 1], 0, 2 ) ]
+
+data = np.loadtxt( "res/ppar_1d.dat" )
+plot_data( data, data_idx )
+
+ax.legend( handle, legend, shadow=True, loc='upper center' )
+#ax.set_xlim([-1600,1600])
+ax.grid( True )
+plt.xlabel( r"Time (fs)", fontdict=font_label )
+plt.ylabel( r"Polarization (arb.)", fontdict=font_label )
+plt.title( r"Polarization for different directions", fontdict=font_title )
+plt.savefig( "fig/ppar.svg" )
+plt.show()

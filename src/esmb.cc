@@ -1,0 +1,85 @@
+#include "esmb.h"
+#include "para.h"
+#include <gsl/gsl_rng.h>
+
+void para_esmb_config( config_t* cfg, parameters* ps );
+void para_esmb_ini( config_t* cfg, parameters* ps )
+{
+    ps->esmb = new para_esmb;
+    para_esmb_config( cfg, ps );
+    ps->esmb->rng = (void*) gsl_rng_alloc( gsl_rng_taus2 );
+}
+
+void para_esmb_del( parameters *ps )
+{
+    gsl_rng_free( (gsl_rng*) ps->esmb->rng );
+    delete ps->esmb;
+}
+
+#include <libconfig.h>
+void para_esmb_config( config_t* cfg, parameters* ps )
+{
+    int n_esmb, with_old;
+    config_lookup_int( cfg, "esmb.n_esmb", &n_esmb );
+    config_lookup_int( cfg, "esmb.with_old", &with_old );
+    ps->esmb->n_esmb = n_esmb;
+    ps->esmb->with_old = with_old;
+}
+
+#include "bath.h"
+#include "repr.h"
+#include "util.h"
+#include "coord.h"
+#include "random.h"
+#include "output.h"
+#include "field.h"
+#include <cmath>
+#include <cstdlib>
+void para_esmb_update( long i_esmb, parameters *ps )
+{
+    // Orientation
+    ps->coord->phi   = 2.0 * M_PI * // [0, 2 pi]
+        gsl_rng_uniform( (gsl_rng*) ps->esmb->rng );
+    ps->coord->theta = 2.0 * // [0, pi)
+        asin( sqrt( gsl_rng_uniform( (gsl_rng*) ps->esmb->rng ) ) );
+    ps->coord->psi   = 2.0 * M_PI *
+        gsl_rng_uniform( (gsl_rng*) ps->esmb->rng );
+    set_para_coord( ps );
+
+    // try to output the orientation, let's see results
+    // output_mol_orient( ps->file->one[para_file::ORIENT]->fptr, ps );
+
+    para_repr_dimer_local pdl;
+    pdl.EA = 16200.0 * C_cm2au; //+ random_normal() * 200.0 * C_cm2au;
+    pdl.EB = 15800.0 * C_cm2au; //+ random_normal() * 200.0 * C_cm2au;
+    pdl.J  = 300.0 * C_cm2au;
+    //pdl.J  = 0.0 * C_cm2au;
+    pdl.mu_A[0] = 0.0;
+    pdl.mu_A[1] = 0.0;
+    pdl.mu_A[2] = 1.0;
+    pdl.mu_B[0] = 0.0;
+    pdl.mu_B[1] = 0.0;
+    pdl.mu_B[2] = -0.36;
+    //pdl.mu_B[2] = 1.0;
+
+    // positions
+    for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+        double r = gsl_rng_uniform( (gsl_rng*) ps->esmb->rng );
+        pdl.pos[i_dim] = (r - 0.5) * 2e-4;
+        // pdl.pos[i_dim] = (rand() * 1.0 / RAND_MAX - 0.5) * 2e-5;
+    }
+    // positions for seidner
+    // for (int i_phi = 0; i_phi < ps->seid->n_phase; i_phi ++)
+    //     for (int i_dim = 0; i_dim < N_DIM; i_dim ++)
+    //         ps->seid->rM[i_phi][i_dim] =
+    //             (rand() * 1.0 / RAND_MAX - 0.5) * 2e-6;
+
+    repr_set_exciton_dimer( ps, &pdl );
+    set_para_bath( ps );
+    set_para_efield_lab( ps );
+    set_para_efield_mol( ps );
+    // set_para_mvar( ps );
+    // para_mpic_set( ps, size, rank );
+    // para_time_set( ps );
+    // set_para_file( ps );
+}

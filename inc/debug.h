@@ -1,0 +1,59 @@
+#ifndef DEBUG_H_
+#define DEBUG_H_
+
+////////////////////////////////////////////////////////////
+// some handy DEBUG routines
+////////////////////////////////////////////////////////////
+#include <iostream>
+#define print(x) {                                                  \
+        std::cout << "PRINT: "                                      \
+                  << " (" << __FILE__ << ", L" << __LINE__ << ")"   \
+                  << "\t" << #x << " = " << x << std::endl; }
+
+#define error_at(s) {                                               \
+        std::cout << "ERROR@ " << s << ":"                          \
+                  << " (" << __FILE__ << ", L" << __LINE__ << ")"   \
+                  << std::endl; exit(-1); }                              
+
+#define error(x) {                                                      \
+        std::cout << "ERROR: "                                          \
+                  << " (" << __FILE__ << ", L" << __LINE__ << ")"       \
+                  << "\t" << #x << " = " << x << std::endl; exit(-1); }
+
+#define error_log( ps, msg ) {                          \
+        fprintf( ps ## file->one[para_file::LOG]->fptr, \
+                 "%s L%d: %s >>> %s\n",                 \
+                 __FILE__, __LINE__, msg, e.what() );   \
+    }
+
+#include <fstream>
+#include <typeinfo>
+#include <cstring>
+#include <cstdlib>
+
+#define printa(x, n) {                                              \
+        for (int idump = 0; idump < n; idump++) {                   \
+            std::cout << x[idump] << std::endl;                     \
+        }                                                           \
+        std::cout << "PRINTA "                                      \
+                  << __FILE__ << " L" << __LINE__ << std::endl; }
+
+#define plot(x, n) {std::ofstream file_dump;                            \
+        file_dump.open("dump.dat");                                     \
+        if (strstr(typeid(x).name(), "complex") != NULL) {              \
+            for (int idump = 0; idump < n; idump++) {                   \
+                file_dump << real(x[idump]) << " " << imag(x[idump])    \
+                          << std::endl;                                 \
+            }                                                           \
+        } else {                                                        \
+            for (int idump = 0; idump < n; idump++) {                   \
+                file_dump << x[idump] << std::endl;                     \
+            }                                                           \
+        }                                                               \
+        file_dump.close();                                              \
+        system("python dump.py");                                       \
+        std::cout << "PLOT " << __FILE__ << " L" << __LINE__            \
+                  << std::endl;                                         \
+    }
+
+#endif
