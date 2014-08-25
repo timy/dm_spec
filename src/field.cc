@@ -65,14 +65,6 @@ void para_efield_config( config_setting_t* setting, parameters* ps )
         config_setting_lookup_float( pulse, "Edir", &(ps->ef[ip]->Edir) );
         config_setting_lookup_float( pulse, "tc", &(ps->ef[ip]->tc) );
 
-#ifndef USE_MPI
-        printf( "@para_efield_config_%d\n", ip );
-        print( ps->ef[ip]->W );
-        print( ps->ef[ip]->E0 );
-        print( ps->ef[ip]->FWHM );
-        print( ps->ef[ip]->Edir );
-        print( ps->ef[ip]->tc );
-#endif
         ps->ef[ip]->W *= C_cm2au;
         ps->ef[ip]->FWHM *= C_fs2au;
         for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
@@ -85,11 +77,7 @@ void para_efield_config( config_setting_t* setting, parameters* ps )
 #include <cstdlib>
 void set_para_efield_lab( parameters *ps )
 {
-    // center time of pulses
-    // ps->ef[0]->tc = - (ps->tau) - (ps->T);
-    // ps->ef[1]->tc = - (ps->T);
-    // ps->ef[2]->tc = 0.0;
-
+    // the following parameters are set: k0, kuvL, EuvL
     // amplitude of wave vectors
     for (int ip = 0; ip < ps->n_pulse; ip ++)
         ps->ef[ip]->k0 = C_om2wv * (ps->ef[ip]->W);
@@ -120,10 +108,7 @@ void set_para_efield_lab( parameters *ps )
         // electric field should be perpendicular to wave vector
         // 1st, we are in k ref coord where k points to (0,0,1)
         // 2nd, rotate (0, 0, 1) by phi = Edir, theta = PI/2 (perp)
-        rotation_matrix( ps->ef[ip]->Edir,
-                         0.5*M_PI,
-                         0.0,
-                         mxRotB_E, mxRotF_E );
+        rotation_matrix( ps->ef[ip]->Edir, 0.5*M_PI, 0.0, mxRotB_E, mxRotF_E );
         rotate_transform( ini_vec, ref_E, mxRotF_E );
         // 3rd, rotate from k ref coord back to lab coord
         // ref_E in ref coord is known, we want coord in lab,
@@ -141,6 +126,7 @@ void set_para_efield_lab( parameters *ps )
 
 void set_para_efield_mol( parameters *ps )
 {
+    // the following parameters are set: kuvM, EuvM
     // unit vectors: transform from lab frame to mol frame
     for (int ip = 0; ip < ps->n_pulse; ip ++) {
         coord_from_lab_to_mol( ps->ef[ip]->kuvL, ps->ef[ip]->kuvM, ps );

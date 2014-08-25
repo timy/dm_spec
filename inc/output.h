@@ -3,8 +3,7 @@
 
 #include <cstdio>
 
-void output_info( int rank, long i_esmbl, long i_tau, FILE *file_info,
-                  struct parameters *ps );
+void output_info( para_file::file_type type, struct parameters* ps );
 
 void output_k_and_r( long i_esmb, FILE *file, struct parameters *ps );
 

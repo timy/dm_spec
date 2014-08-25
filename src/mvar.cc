@@ -24,7 +24,6 @@ void mvar_calc_esmb( parameters *ps )
     // 1d array: nt * n_dim
     complex **ptot = prepare_pol_array( 1, ps );
 
-    // srand( ps->mpic->rank + 1 );
     gsl_rng_set( (gsl_rng*) ps->esmb->rng, ps->mpic->rank + 1 );
 
     long i_esmb_0 = ps->mpic->idx0;
@@ -79,7 +78,7 @@ void mvar_calc_grid_seidner( parameters *ps )
             io_pol_dir_read( para_file::PPAR_2D, ppar_2d,
                              ps->seid->n_phase, NULL, ps );
         } catch (std::runtime_error& e) {
-            error_log( ps->, "Cannot open old data file." );
+            error_log( ps, "Cannot open old data file." );
             clean_pol_array_seidner( 2, ppar_2d, ps );
             clean_pol_array_seidner( 2, ptot_2d, ps );
             return;
@@ -90,8 +89,8 @@ void mvar_calc_grid_seidner( parameters *ps )
     complex ***ppar_1d = prepare_pol_array_seidner( 1, ps );
     complex ***ptot_1d = prepare_pol_array_seidner( 1, ps );
 
-    // srand( 1 );
-    gsl_rng_set( (gsl_rng*) ps->esmb->rng, 4 ); // set from 1, 2, 3, to 4
+    gsl_rng_set( (gsl_rng*) ps->esmb->rng, 4 );
+    gsl_rng_set( (gsl_rng*) ps->seid->rng, 4 );
 
     for (long i_esmb = 0; i_esmb < ps->esmb->n_esmb; i_esmb ++) {
         para_esmb_update( i_esmb, ps );

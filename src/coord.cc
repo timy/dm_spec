@@ -40,12 +40,6 @@ void para_coord_config( config_t* cfg, parameters* ps )
     config_lookup_float( cfg, "euler.phi", &phi );
     config_lookup_float( cfg, "euler.theta", &theta );
     config_lookup_float( cfg, "euler.psi", &psi );
-#ifndef USE_MPI
-    printf( "@para_coord_config\n" );
-    print( phi );
-    print( theta );
-    print( psi );
-#endif
     ps->coord->phi   = phi   * M_PI;
     ps->coord->theta = theta * M_PI;
     ps->coord->psi   = psi   * M_PI;

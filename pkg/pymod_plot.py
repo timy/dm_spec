@@ -1,10 +1,10 @@
 font_title = {
     'family' : 'serif',
     'weight' : 'normal',
-    'size'   : 18,}
+    'size'   : 24,}
 font_label = {
     'weight' : 'normal',
-    'size'   : 16,}
+    'size'   : 22,}
 
 import matplotlib.pyplot as plt
 
@@ -26,6 +26,8 @@ def plot_show( ax, handle=[], legend=[], xlabel='x', ylabel='y', title='',
         ax.set_xlim( xlim )
     if ylim:
         ax.set_ylim( ylim )
+    ax.tick_params(axis='both', which='major', labelsize=18)
+    ax.tick_params(axis='both', which='minor', labelsize=16)
     ax.figure.set_size_inches(20,14)
     ax.figure.savefig( filename, dpi=100 )
     if show:

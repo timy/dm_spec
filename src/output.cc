@@ -45,48 +45,6 @@ void output_k_and_r( long i_esmb, FILE *file, parameters *ps )
     fprintf( file, "\n" );
 }
 
-void output_info( int rank, long i_esmbl, long i_tau, FILE *file_info,
-                  parameters *ps )
-{
-    // indice
-    fprintf( file_info, "rank=%d/ismb=%ld/itau=%ld/",
-             rank, i_esmbl, i_tau );
-    // mixture angle
-    fprintf( file_info, "mixa=%le/", ps->repr->theta );
-    // energy
-    for (int i = 0; i < ps->n_lvl; i ++)
-        fprintf( file_info, "E%d=%le/", i, ps->energy[i]/C_cm2au );
-    // dipole
-    for (int i = 0; i < ps->n_dpl; i ++)
-        for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-            fprintf( file_info, "D%d%c=%le/", i, 120+i_dim,
-                     ps->dipole[i][i_dim] );
-    // orientation
-    fprintf( file_info, "phi=%f/the=%f/psi=%f/",
-             ps->coord->phi,
-             ps->coord->theta,
-             ps->coord->psi );
-    // bath
-    fprintf( file_info, "g12=%le/g21=%le/G11=%le/G22=%le/G12=%le/",
-             (ps->bath->g12), (ps->bath->g21),
-             (ps->bath->G11), (ps->bath->G22), (ps->bath->G12) );
-    fprintf( file_info, "G10=%le/G20=%le/G31=%le/G32=%le/G30=%le/",
-             (ps->bath->G10), (ps->bath->G20),
-             (ps->bath->G31), (ps->bath->G32), (ps->bath->G30) );
-    // // Pnl coefficients: FIXME!!!! for seidner only
-    // fprintf( file_info, "cpnl=" );
-    // for (int i_dir = 0; i_dir < (ps->seid->n_phase); i_dir ++) {
-    //     for (int i_phi = 0; i_phi < (ps->seid->n_phase); i_phi ++)
-    //         fprintf( file_info, "%le,%le|",
-    //                  real(ps->seid->pnl_expr[i_dir][i_phi]),
-    //                  imag(ps->seid->pnl_expr[i_dir][i_phi]) );
-    //     fprintf( file_info, ";" );
-    // }
-    fprintf( file_info, "/" );
-    // EOF
-    fprintf( file_info, "\n");
-}
-
 void output_mol_orient( FILE* file, parameters *ps )
 {
     double phi = ps->coord->phi;
@@ -151,6 +109,99 @@ void output_ef_EuvM( FILE* file, parameters *ps )
         for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
             fprintf( file, "%le ", (ps->ef[i_pulse]->EuvM[i_dim]) );
     fprintf( file, "\n" );
+}
+
+
+// output general information
+// used for para_init_config_write and para_init_info_write
+#define print_info( file, x ) {                                    \
+        fprintf( file, "%s,L%d: ", __FILE__, __LINE__ );        \
+        dm_fprintf( file, #x );                                 \
+        fprintf( file, " = " );                                 \
+        dm_fprintf( file, x );                                  \
+        fputc( '\n', file );                                    \
+    }
+#define display_section( file, x ) {              \
+        fprintf( file, "\n%s\n", x ); }
+
+void output_info( para_file::file_type type, parameters* ps )
+{
+    open_para_file_write( type, NULL, ps, 0, NULL );
+    FILE* file = ps->file->one[type]->fptr;
+
+    display_section( file, "basic" );
+    print_info( file, ps->n_dim );
+    print_info( file, ps->n_lvl );
+    print_info( file, ps->n_dpl );
+    print_info( file, ps->n_pulse );
+
+    display_section( file, "time" );
+    print_info( file, ps->nt );
+    print_info( file, ps->t0/C_fs2au );
+    print_info( file, ps->t1/C_fs2au );
+    print_info( file, ps->dt/C_fs2au );
+    print_info( file, ps->it0 );
+    print_info( file, ps->time[ps->it0]/C_fs2au );
+
+    display_section( file, "core" );
+    for (int i = 0; i < ps->n_lvl; i ++)
+        print_info( file, ps->energy[i]/C_cm2au );
+    for (int i = 0; i < ps->n_dpl; i ++)
+        for (int j = 0; j < ps->n_dim; j ++)
+            print_info( file, ps->dipole[i][j] );
+    for (int i = 0; i < ps->n_dim; i ++)
+        print_info( file, ps->pos[i] );
+
+    display_section( file, "bath" );
+    print_info( file, ps->bath->g );
+    print_info( file, ps->bath->w_cut/C_cm2au );
+    print_info( file, ps->bath->T/C_T2au );
+    print_info( file, ps->bath->g12 );
+    print_info( file, ps->bath->g21 );
+    print_info( file, ps->bath->G11 );
+    print_info( file, ps->bath->G22 );
+    print_info( file, ps->bath->G12 );
+    print_info( file, ps->bath->G10 );
+    print_info( file, ps->bath->G20 );
+    print_info( file, ps->bath->G31 );
+    print_info( file, ps->bath->G32 );
+    print_info( file, ps->bath->G30 );
+
+    display_section( file, "repr" );
+    print_info( file, ps->repr->theta );
+
+    display_section( file, "coord" );
+    print_info( file, ps->coord->phi/M_PI );
+    print_info( file, ps->coord->theta/M_PI );
+    print_info( file, ps->coord->psi/M_PI );
+
+    display_section( file, "mvar" );
+    print_info( file, ps->mvar->ny );
+    print_info( file, ps->mvar->y0 );
+    print_info( file, ps->mvar->y1 );
+    print_info( file, ps->mvar->dy );
+    print_info( file, ps->mvar->dimGrid );
+    print_info( file, ps->esmb->n_esmb );
+
+    display_section( file, "mpic" );
+    print_info( file, ps->mpic->njob );
+    print_info( file, ps->mpic->idx0 );
+
+    display_section( file, "efield" );
+    for (int i = 0; i < ps->n_pulse; i ++) {
+        print_info( file, ps->ef[i]->W/C_cm2au );
+        print_info( file, ps->ef[i]->E0 );
+        print_info( file, ps->ef[i]->FWHM/C_fs2au );
+        print_info( file, ps->ef[i]->Edir/M_PI );
+        for (int j = 0; j < ps->n_dim; j ++)
+            print_info( file, ps->ef[i]->kdir[j]/M_PI );
+        fprintf( file, "\n" );
+    }
+
+    display_section( file, "help" );
+    print_info( file, ps->help->w_max );
+
+    close_para_file( type, ps );
 }
 
 //////////////////////////// RL ////////////////////////////////
@@ -237,10 +288,11 @@ void io_pol_read( FILE** file, complex** pol, parameters* ps )
             // notice, idx0 is used to locate the start in global array
             long index = (idx0 + is) * (ps->nt) + it;
             for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                // fscanf( file[i_dim], "%le %le", &re, &im );
-                // pol[index][i_dim] = complex( re, im );
-                fscanf( file[i_dim], "%le", &re );
-                pol[index][i_dim] = complex( re, 0.0 );
+                fscanf( file[i_dim], "%le %le", &re, &im );
+                pol[index][i_dim] = complex( re, im );
+                // For seidner's method, cuz ptot is allways real, we can save half storage
+                // fscanf( file[i_dim], "%le", &re );
+                // pol[index][i_dim] = complex( re, 0.0 );
             }
         }
 }

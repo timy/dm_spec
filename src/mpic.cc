@@ -26,7 +26,7 @@ void para_mpic_ini( parameters *ps, long size, long rank )
 {
     ps->mpic = new para_mpic;
     para_mpic_set( ps, size, rank );
-    
+
     int file_idx[1] = { (int) ps->mpic->rank };
     open_para_file_write( para_file::LOG, NULL, ps, 1, file_idx );
 }
@@ -41,7 +41,7 @@ void para_mpic_set( parameters *ps, long size, long rank )
 {
     ps->mpic->size = size;
     ps->mpic->rank = rank;
-    
+
     long n_total;
     if (ps->mvar->ny > 1) {     // 2D: task partition for the 2nd var
         n_total = ps->mvar->ny;

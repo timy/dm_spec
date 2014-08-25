@@ -96,12 +96,12 @@ import matplotlib.pyplot as plt
 #             plot_data_abs( data[i], [i_dir], handle, legend, ax, lim,
 #                            lbl[i], factor[i] )
 #         fname = "fig/ppar_%2d_%2d_%2d.png" % (i_dir[0], i_dir[1], i_dir[2])
-#         pymod_plot.plot_1d_draw( handle, legend, ax, 
+#         pymod_plot.plot_1d_draw( handle, legend, ax,
 #                                  xlabel=r"Time (fs)",
 #                                  ylabel=r"Polarization (arb.)",
-#                                  filename=fname,                      
+#                                  filename=fname,
 #                                  show=False )
-#         #plt.xlim( [ t[idx_range[0]], t[idx_range[-1]] ] )        
+#         #plt.xlim( [ t[idx_range[0]], t[idx_range[-1]] ] )1
 #         plt.close()
 
 
@@ -227,8 +227,11 @@ def plot_2D( signal, ax, extent ):
     ax.contour( signal, 20, hold='on', colors = 'k',
                 origin=origin,
                 extent=extent )
-    plt.colorbar(im)
-
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.5)
+    cbar = plt.colorbar(im, cax=cax)
+    cbar.ax.tick_params(labelsize=16)
 
 import sys
 def plot_signal_2d( t, s, data, func, ax, obj=[],
@@ -273,4 +276,3 @@ def plot_signal_2d( t, s, data, func, ax, obj=[],
     extent = ( x[0], x[-1], -y[-1], -y[0] )
 
     plot_2D( func(signal), ax, extent )
-

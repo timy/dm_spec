@@ -1,6 +1,5 @@
 #include "para.h"
 #include "mvar.h"
-#include "mpi_cfg.h"
 #include "debug.h"
 #include "util.h"
 #include <mpi.h>
@@ -22,11 +21,11 @@ int main( int argc, char* argv[] )
     // obtain basic parameters
     parameters ps = { .f_eom = equation_of_motion_full };
     para_ini( &ps, "cfg/parameters.cfg", size, rank );
-    
+
     // actual calculation
     // mvar_calc_esmb( &ps );
-    // mvar_calc_grid_seidner( &ps );
-    mvar_calc_grid( &ps );    
+    mvar_calc_grid_seidner( &ps );
+    // mvar_calc_grid( &ps );
 
     // clean parameters
     para_del( &ps );

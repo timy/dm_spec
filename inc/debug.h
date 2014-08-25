@@ -5,25 +5,25 @@
 // some handy DEBUG routines
 ////////////////////////////////////////////////////////////
 #include <iostream>
-#define print(x) {                                                  \
-        std::cout << "PRINT: "                                      \
-                  << " (" << __FILE__ << ", L" << __LINE__ << ")"   \
+#define print(x) {                                                      \
+        std::cout << "PRINT: "                                          \
+                  << " (" << __FILE__ << ", L" << __LINE__ << ")"       \
                   << "\t" << #x << " = " << x << std::endl; }
 
-#define error_at(s) {                                               \
-        std::cout << "ERROR@ " << s << ":"                          \
-                  << " (" << __FILE__ << ", L" << __LINE__ << ")"   \
-                  << std::endl; exit(-1); }                              
+#define error_at(s) {                                                   \
+        std::cout << "ERROR@ " << s << ":"                              \
+                  << " (" << __FILE__ << ", L" << __LINE__ << ")"       \
+                  << std::endl; exit(-1); }
 
 #define error(x) {                                                      \
         std::cout << "ERROR: "                                          \
                   << " (" << __FILE__ << ", L" << __LINE__ << ")"       \
                   << "\t" << #x << " = " << x << std::endl; exit(-1); }
 
-#define error_log( ps, msg ) {                          \
-        fprintf( ps ## file->one[para_file::LOG]->fptr, \
-                 "%s L%d: %s >>> %s\n",                 \
-                 __FILE__, __LINE__, msg, e.what() );   \
+// pointer to ps is needed here
+#define error_log( ps, msg ) {                                  \
+        fprintf( (ps)->file->one[para_file::LOG]->fptr,         \
+                 "%s L%d: %s\n", __FILE__, __LINE__, msg );     \
     }
 
 #include <fstream>
@@ -31,11 +31,11 @@
 #include <cstring>
 #include <cstdlib>
 
-#define printa(x, n) {                                              \
-        for (int idump = 0; idump < n; idump++) {                   \
-            std::cout << x[idump] << std::endl;                     \
-        }                                                           \
-        std::cout << "PRINTA "                                      \
+#define printa(x, n) {                                                  \
+        for (int idump = 0; idump < n; idump++) {                       \
+            std::cout << x[idump] << std::endl;                         \
+        }                                                               \
+        std::cout << "PRINTA "                                          \
                   << __FILE__ << " L" << __LINE__ << std::endl; }
 
 #define plot(x, n) {std::ofstream file_dump;                            \

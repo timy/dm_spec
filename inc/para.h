@@ -155,6 +155,8 @@ struct para_seidner
 
   // n_phase * n_phase
   std::complex<double> **pnl_expr;
+
+  void* rng; // the damn gsl_rng typedef
 };
 
 struct para_help

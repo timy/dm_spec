@@ -18,15 +18,14 @@
 
 void set_para( parameters *para );
 
-void read_mpi_pol_1d( complex ***pol_1d, FILE *file, 
-                      struct parameters *ps );
+void read_mpi_pol_1d( complex ***pol_1d, FILE *file, struct parameters *ps );
 
 void process_kr( struct parameters *ps );
 
 int main( int argc, char *argv[] )
 {
     // FIXME!
-    const long nx = NX; 
+    const long nx = NX;
 
     parameters ps;
     set_para( &ps );
@@ -52,15 +51,14 @@ int main( int argc, char *argv[] )
         if (!file_ppar_node) {
             fprintf( stderr, "Cannot open %s!\n", file_name ); exit(-1);
         }
-            
+
         // read data from individual file
         read_mpi_pol_1d( ppar_1d, file_ppar_node, &ps );
         // ensemble averaging over all nodes
         for (int i_dir = 0; i_dir < ps.n_phase; i_dir ++)
             for (long ix = 0; ix < nx; ix ++)
                 for (int i_dim = 0; i_dim < ps.n_dim; i_dim ++)
-                    ppar_esmb[i_dir][ix][i_dim] +=
-                        ppar_1d[i_dir][ix][i_dim];
+                    ppar_esmb[i_dir][ix][i_dim] += ppar_1d[i_dir][ix][i_dim];
         fclose( file_ppar_node );
     }
     // output
@@ -100,7 +98,7 @@ void read_mpi_pol_1d( complex*** pol_1d, FILE *file, parameters *ps )
                 pol_1d[ip][ix][i_dim] = complex( re, im );
             }
         }
-    }    
+    }
 }
 
 void process_kr( parameters *ps )
@@ -173,11 +171,10 @@ void process_kr( parameters *ps )
             for (int i_pulse = 0; i_pulse < (ps->n_pulse); i_pulse ++) {
                 phi[i_phi][i_pulse] = 0.0;
                 for (int i_dim = 0; i_dim < (ps->n_dim); i_dim ++) {
-                    phi[i_phi][i_pulse] += 
-                        k[i_pulse][i_dim] * r[i_phi][i_dim];
+                    phi[i_phi][i_pulse] += k[i_pulse][i_dim] * r[i_phi][i_dim];
                 }
             }
-        
+
         // // test output
         // fprintf( stdout, "Output spatial phase:\n" );
         // for (int i_phi = 0; i_phi < (ps->n_phase); i_phi ++) {

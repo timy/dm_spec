@@ -4,8 +4,6 @@
 
 void prepare_bath_para( parameters *ps );
 
-
-
 void para_bath_config( struct config_t* cfg, struct parameters *ps );
 #include <libconfig.h>
 void para_bath_ini( config_t* cfg, parameters *ps )
@@ -26,12 +24,6 @@ void para_bath_config( struct config_t* cfg, struct parameters *ps )
     config_lookup_float( cfg, "bath.g", &(ps->bath->g) );
     config_lookup_float( cfg, "bath.w_cut", &(ps->bath->w_cut) );
     config_lookup_float( cfg, "bath.T", &(ps->bath->T) );
-#ifndef USE_MPI
-    printf( "@para_bath_config\n" );
-    print( ps->bath->g );
-    print( ps->bath->w_cut );
-    print( ps->bath->T );    
-#endif
     ps->bath->w_cut *= C_cm2au;
     ps->bath->T *= C_T2au;
 }
@@ -43,9 +35,8 @@ void set_para_bath( parameters *ps )
 
 double spectral_density_J( double w, parameters *ps )
 {
-    double J = 
-        (ps->bath->g) * (ps->bath->g) * w / (ps->bath->w_cut) *
-             exp( -w / (ps->bath->w_cut) );
+    double g2 = (ps->bath->g) * (ps->bath->g);
+    double J = g2 * w / (ps->bath->w_cut) * exp( -w / (ps->bath->w_cut) );
     return J;
 }
 
@@ -60,13 +51,11 @@ double re_FT_CF( double w, parameters *ps )
 {
     double re_FTCF;
     if ( fabs(w) < 1e-6 )
-        re_FTCF = (ps->bath->g) * (ps->bath->g) 
-            * (ps->bath->T) / (ps->bath->w_cut);
+        re_FTCF = (ps->bath->g) * (ps->bath->g) * (ps->bath->T) / (ps->bath->w_cut);
     else if ( w > 0.0 )
         re_FTCF = boson_n( w, ps ) * spectral_density_J( w, ps );
     else // w < 0.0
-        re_FTCF = (1.0 + boson_n( -w, ps )) * 
-            spectral_density_J( -w, ps );
+        re_FTCF = (1.0 + boson_n( -w, ps )) * spectral_density_J( -w, ps );
     return re_FTCF;
 }
 
@@ -93,13 +82,10 @@ void prepare_bath_para( parameters *ps )
     ps->bath->g21 = bath_gamma( -w12, ps );
     ps->bath->G11 = ps->bath->g21;
     ps->bath->G22 = ps->bath->g12;
-    ps->bath->G12 = GmRate11 
-        + 0.5 * ( ps->bath->g12 + ps->bath->g21 );
+    ps->bath->G12 = GmRate11 + 0.5 * ( ps->bath->g12 + ps->bath->g21 );
     ps->bath->G10 = GmRate10 + 0.5 * ps->bath->g21;
     ps->bath->G20 = GmRate10 + 0.5 * ps->bath->g12;
     ps->bath->G31 = GmRate21 + 0.5 * ps->bath->g21;
     ps->bath->G32 = GmRate21 + 0.5 * ps->bath->g12;
     ps->bath->G30 = GmRate20;
 }
-
-

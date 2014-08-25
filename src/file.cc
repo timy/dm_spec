@@ -10,7 +10,7 @@ void para_file_config( struct config_t* cfg, struct parameters* ps );
 void para_file_ini( struct config_t* cfg, struct parameters *ps )
 {
     ps->file = new para_file;
-    para_file_config( cfg, ps );    
+    para_file_config( cfg, ps );
 }
 
 void para_file_del( struct parameters *ps )
@@ -91,7 +91,7 @@ void para_file_config( struct config_t* cfg, struct parameters* ps )
     config_lookup_string( cfg, "file.config", &name );
     set_para_file_one( para_file::CONFIG, name, ps );
     config_lookup_string( cfg, "file.kuvl", &name );
-    set_para_file_one( para_file::KUVL, name, ps );    
+    set_para_file_one( para_file::KUVL, name, ps );
     config_lookup_string( cfg, "file.kuvm", &name );
     set_para_file_one( para_file::KUVM, name, ps );
     config_lookup_string( cfg, "file.kl", &name );
@@ -141,7 +141,7 @@ void set_para_file_mul( para_file::file_type type, const char* name,
         f->mul[type]->name = new char*[n_file];
         for (int i_file = 0; i_file < n_file; i_file ++) {
             f->mul[type]->name[i_file] = new char[256];
-            sprintf( f->mul[type]->name[i_file], 
+            sprintf( f->mul[type]->name[i_file],
                      "%s%d", name, i_file );
         }
         // file.mul_node.fptr
@@ -162,18 +162,6 @@ void file_name_generate( char* name_basic, char* file_name,
 void open_para_file_read( para_file::file_type type, char *prefix,
                           struct parameters *ps, int n_idx, int *idx )
 {
-    // char file_name[512], sub_name[256];
-    // file_name_generate( type, sub_name, ps, n_idx, idx );
-    // if (prefix == NULL)
-    //     strcpy( file_name, sub_name );
-    // else {
-    //     strcpy( file_name, prefix );
-    //     strcat( file_name, sub_name );
-    // }
-    // ps->file->one[type]->fptr = fopen( file_name, "r" );
-    // if (ps->file->one[type]->fptr == NULL )
-    //     error( file_name );
-
     char file_name[512], sub_name[256];
     para_file::one_node* f1 = ps->file->one[type];
     para_file::mul_node* f2 = ps->file->mul[type];
@@ -212,19 +200,6 @@ void open_para_file_read( para_file::file_type type, char *prefix,
 void open_para_file_write( para_file::file_type type, char *prefix,
                            struct parameters *ps, int n_idx, int *idx )
 {
-    // char file_name[512], sub_name[256];
-    // file_name_generate( ps->file->one[type]->name, sub_name, 
-    //                     n_idx, idx );
-    // if (prefix == NULL)
-    //     strcpy( file_name, sub_name );
-    // else {
-    //     strcpy( file_name, prefix );
-    //     strcat( file_name, sub_name );
-    // }
-    // ps->file->one[type]->fptr = fopen( file_name, "w" );
-    // if (ps->file->one[type]->fptr == NULL )
-    //     error( file_name );
-
     char file_name[512], sub_name[256];
     para_file::one_node* f1 = ps->file->one[type];
     para_file::mul_node* f2 = ps->file->mul[type];

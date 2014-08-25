@@ -1,4 +1,4 @@
-EXE =	test
+EXE	=	test
 SRC	=	main.cc
 
 DIR_INC =  ../../inc/2
@@ -25,7 +25,7 @@ LFLAGS	=	\
 	/usr/lib64/gcc/x86_64-suse-linux/4.3/libgfortran.a \
 	-lgsl -lblas /data1/home/tianmin/software/cblas/lib/cblas_LINUX.a
 
-OBJ	=	$(SRC:%.cc=%.o) 
+OBJ	=	$(SRC:%.cc=%.o)
 
 %.o : %.cc
 	$(CC) $< $(CFLAGS) -c -o $@
@@ -33,8 +33,14 @@ OBJ	=	$(SRC:%.cc=%.o)
 all : $(EXE)
 
 $(EXE) : $(OBJ)
-	$(CC) $(OBJ) $(OBJ_CORE) $(LFLAGS) -o $@ 
+	$(CC) $(OBJ) $(OBJ_CORE) $(LFLAGS) -o $@
 
 clean:
 	rm -f $(OBJ)
+	rm -f $(EXE)
 	rm -f *~
+
+cleanall: clean
+	rm -f res/*.dat
+	rm -f fig/*.png
+	rm -f fig/*.svg

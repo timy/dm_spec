@@ -1,5 +1,6 @@
 #include "esmb.h"
 #include "para.h"
+#include "seidner.h"
 #include <gsl/gsl_rng.h>
 
 void para_esmb_config( config_t* cfg, parameters* ps );
@@ -35,6 +36,7 @@ void para_esmb_config( config_t* cfg, parameters* ps )
 #include "field.h"
 #include <cmath>
 #include <cstdlib>
+
 void para_esmb_update( long i_esmb, parameters *ps )
 {
     // Orientation
@@ -54,6 +56,7 @@ void para_esmb_update( long i_esmb, parameters *ps )
     pdl.EB = 15800.0 * C_cm2au; //+ random_normal() * 200.0 * C_cm2au;
     pdl.J  = 300.0 * C_cm2au;
     //pdl.J  = 0.0 * C_cm2au;
+
     pdl.mu_A[0] = 0.0;
     pdl.mu_A[1] = 0.0;
     pdl.mu_A[2] = 1.0;
@@ -62,24 +65,26 @@ void para_esmb_update( long i_esmb, parameters *ps )
     pdl.mu_B[2] = -0.36;
     //pdl.mu_B[2] = 1.0;
 
-    // positions
-    for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-        double r = gsl_rng_uniform( (gsl_rng*) ps->esmb->rng );
-        pdl.pos[i_dim] = (r - 0.5) * 2e-4;
-        // pdl.pos[i_dim] = (rand() * 1.0 / RAND_MAX - 0.5) * 2e-5;
-    }
-    // positions for seidner
-    // for (int i_phi = 0; i_phi < ps->seid->n_phase; i_phi ++)
-    //     for (int i_dim = 0; i_dim < N_DIM; i_dim ++)
-    //         ps->seid->rM[i_phi][i_dim] =
-    //             (rand() * 1.0 / RAND_MAX - 0.5) * 2e-6;
-
     repr_set_exciton_dimer( ps, &pdl );
     set_para_bath( ps );
     set_para_efield_lab( ps );
     set_para_efield_mol( ps );
+
+    // positions for pullerits', comment for seidner's
+    // for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+    //     doubel r = gsl_rng_uniform( (gsl_rng*) ps->esmb->rng );
+    //     ps->pos[i_dim] = (r - 0.5) * 2e-4;
+    // }
+
+    // positions for seidner's, comment for pullerits'
+    set_para_seidner( ps );
+
     // set_para_mvar( ps );
     // para_mpic_set( ps, size, rank );
     // para_time_set( ps );
     // set_para_file( ps );
+
+    // output information after sample update
+    if (ps->mpic->rank == 0 && i_esmb == 0)
+        output_info( para_file::INFO, ps );
 }
