@@ -3,17 +3,6 @@ import numpy as np
 
 data = np.loadtxt("res/dm_0.dat")
 field = np.loadtxt("res/ef_0.dat")
-
-# idx = ["re_11", "re_22", "re_33"]
-
-
-#idx = ["Rr1n1", "Rr2n2", "Rr3n3", "Rr4n4", "Rr5n5", "Rr6n6"]
-
-#idx = ["Rr1n0", "Rr2n0"]
-
-
-#t = data[:,0]
-
 t = np.loadtxt("res/time.dat")
 
 # Insert code generated from Mathematica here:
@@ -90,7 +79,6 @@ dat = {
 }
 
 idx = ["Rr3n1", "Rr3n0", "Rr1n2"]
-# idx = ["Rr1n0", "Rr2n0"]
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)

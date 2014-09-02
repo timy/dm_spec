@@ -154,6 +154,7 @@ void calc_ppar_seidner( complex*** ppar, complex*** ptot, parameters *ps )
     fprintf( stdout, "%s: %d\n", __FILE__, __LINE__ );
     for (int i_phi = 0; i_phi < ps->seid->n_phase; i_phi ++)
         fprintf( stdout, "%d: %.15f\n", i_phi, real(ps->seid->pnl_expr[14][i_phi]) );
+
 }
 
 #include "debug.h"

@@ -132,8 +132,8 @@ void ptot_from_dm_org( complex* pol_M, double* rho, parameters *ps )
     // complex r12 = complex( rho[12], rho[13] );
     // complex r30 = complex( rho[14], rho[15] );
     for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-        pol_M[i_dim] = 2.0 * real( mu_10[i_dim] * r10 ); //+ mu_20[i_dim] * r20 );
-                                   //mu_31[i_dim] * r31 + mu_32[i_dim] * r32 );
+        pol_M[i_dim] = 2.0 * real( mu_10[i_dim] * r10 + mu_20[i_dim] * r20 );
+                                   mu_31[i_dim] * r31 + mu_32[i_dim] * r32 );
     }
 }
 
