@@ -1,0 +1,45 @@
+# DIR_BASE should be defined before including this file
+DIR_INC		=	$(DIR_BASE)/inc
+DIR_SRC		=	$(DIR_BASE)/src
+DIR_PKG		=	$(DIR_BASE)/pkg
+DIR_CFG		=	$(DIR_BASE)/cfg
+DIR_FIG		=	$(DIR_BASE)/fig
+DIR_ANA		=	$(DIR_BASE)/ana
+
+DIR_ANA_SUB	=	seidner pullerits
+
+SRC_CORE	=	\
+        para.cc rotation.cc coord.cc repr.cc bath.cc random.cc \
+        field.cc prop.cc eom.cc polar.cc timestep.cc help.cc \
+        output.cc position.cc util.cc file.cc esmb.cc mpic.cc \
+        mvar.cc config.cc postproc.cc seidner.cc
+
+# CC		=	/data1/home/tianmin/software/mpich/bin/mpicxx
+# CFLAGS		=	-Wall -O3 -I$(DIR_INC)
+# LFLAGS		=	\
+#         /data1/home/tianmin/software/mpich/lib/libmpich.a  \
+#         /data1/home/tianmin/software/fftw3/lib/libfftw3.a \
+#         /data1/home/tianmin/software/lapack/lib/liblapack.a \
+#         /data1/home/tianmin/software/lapack/lib/librefblas.a \
+#         /usr/lib64/gcc/x86_64-suse-linux/4.3/libgfortran.a \
+#         /data1/home/tianmin/software/gsl/lib/libgsl.a \
+#         -lblas /data1/home/tianmin/software/cblas/lib/cblas_LINUX.a \
+#         /data1/home/tianmin/software/libconfig/lib/libconfig.a
+
+# # MPI for lemaitre2
+# CC	=	mpicxx
+# CFLAGS	=	-Wall -O3 -I$(DIR_INC) -DUSE_MPI
+# LFLAGS	=	-L/usr/lib64/atlas -lcblas -lgsl -llapack -lconfig
+
+# # MPI for NIC4
+# CC	=	mpicxx
+# CFLAGS	=	-Wall -O3 -I$(DIR_INC) -DUSE_MPI
+# LFLAGS	=	-L/usr/lib64/atlas -l:libcblas.so.3 -l:liblapack.so.3 \
+#               -lconfig -lgsl
+
+# For my laptop
+CC		=	g++
+CFLAGS	=	-Wall -g -I$(DIR_INC)
+LFLAGS	=	-llapack -lm -lgsl -lconfig
+
+RM		=	rm -f
