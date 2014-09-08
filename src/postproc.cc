@@ -7,7 +7,7 @@
 // a res dir storing all output from MPI computation. After post-process,
 // data will be output to current-dir/res, irrelevant to prefix.
 
-void collect_mpi_grid( char* cfg_file, int n_node, char* prefix )
+void postproc_collect_mpi_grid( char* cfg_file, int n_node, char* prefix )
 {
     parameters ps; ps.f_eom = NULL;
     para_ini( &ps, cfg_file );
@@ -23,3 +23,5 @@ void collect_mpi_grid( char* cfg_file, int n_node, char* prefix )
     delete[] grid;
     para_del( &ps );
 }
+
+// void postproc_

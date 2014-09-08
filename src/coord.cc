@@ -79,12 +79,12 @@ void coord_from_mol_to_lab( T *v_a, T *v_b, parameters *ps )
 
 // instantiation of template functions
 template
-void coord_from_lab_to_mol<double>( double*, double*, parameters* );
+void coord_from_lab_to_mol<>( double*, double*, parameters* );
 template
-void coord_from_mol_to_lab<double>( double*, double*, parameters* );
+void coord_from_mol_to_lab<>( double*, double*, parameters* );
 #include "complex.h"
 #define complex std::complex<double>
 template
-void coord_from_lab_to_mol<complex>( complex*, complex*, parameters* );
+void coord_from_lab_to_mol<>( complex*, complex*, parameters* );
 template
-void coord_from_mol_to_lab<complex>( complex*, complex*, parameters* );
+void coord_from_mol_to_lab<>( complex*, complex*, parameters* );

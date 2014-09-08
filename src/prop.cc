@@ -18,7 +18,7 @@ void prop( para_eom *peom )
     double hstart = 1e-12;
     double epsabs = 1e-14;
     double epsrel = 1e-14;
-    gsl_odeiv2_system sys = { ps->f_eom, NULL, ps->n_eom, peom };
+    gsl_odeiv2_system sys = { ps->f_eom, NULL, (size_t) ps->n_eom, peom };
     gsl_odeiv2_driver *driver;
     driver = gsl_odeiv2_driver_alloc_y_new( &sys, gsl_odeiv2_step_rk8pd,
                                             hstart, epsabs, epsrel );
@@ -37,7 +37,7 @@ void prop( para_eom *peom )
     for (long it = 1; it < (ps->nt); it ++) {
         double ti = ps->time[it];                 // a.u.
         int status = gsl_odeiv2_driver_apply( driver, &t, ti, y );
-        if (status != GSL_SUCCESS) error( status );
+        if (status != GSL_SUCCESS) error( ps, "%d", status );
         eom_post_proc( it, y, peom );
     }
     // clean

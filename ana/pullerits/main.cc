@@ -247,7 +247,7 @@ void display_dir_index() {
 
 int main( int argc, char* argv[] ) {
     char cfg_file[] = "../../cfg/parameters.cfg";
-    collect_mpi_grid( cfg_file, n_node, "../../" );
+    postproc_collect_mpi_grid( cfg_file, n_node, "../../" );
     ini_dir_index();
     display_dir_index();
     ppar_extract_pullerits( cfg_file );

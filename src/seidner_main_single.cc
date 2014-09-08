@@ -29,9 +29,9 @@ int main( int argc, char* argv[] )
         exit( -1 );
     }
 
-    // ppar_1d, ptot_1d: n_phase * nx * n_dim
-    complex ***ppar_1d = prepare_pol_array_seidner( 1, &ps );
-    complex ***ptot_1d = prepare_pol_array_seidner( 1, &ps );
+    // ppar_1d, ptot_1d: n_phase * nx * n_dpl* n_dim
+    complex ****ppar_1d = prepare_pol_array_seidner( 1, &ps );
+    complex ****ptot_1d = prepare_pol_array_seidner( 1, &ps );
 
     // calculation
     calc_ptot_seidner( ptot_1d, &ps );

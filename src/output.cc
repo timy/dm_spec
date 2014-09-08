@@ -258,7 +258,7 @@ void io_grid_read( para_file::file_type type, double *s,
 // For the same variables, 3 files store data for 3 coordinates
 ////////////////////////////////////////////////////////////
 
-void io_pol_write( FILE** file, complex** pol, parameters* ps )
+void io_pol_write( FILE** file, complex*** pol, parameters* ps )
 {
     // here one should notice, for pullerits' method, ptot is real, one can choose
     // output only the real part to save half storage, then column no.=1
@@ -267,15 +267,19 @@ void io_pol_write( FILE** file, complex** pol, parameters* ps )
     for (int is = 0; is < ns; is ++)
         for (int it = 0; it < ps->nt; it ++) {
             long index = is * (ps->nt) + it;
-            for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                fprintf( file[i_dim], "%le %le\n",
-                         real(pol[index][i_dim]), imag(pol[index][i_dim]) );
-                // fprintf( file[i_dim], "%le\n", real(pol[index][i_dim]) );
-            }
+            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+                for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+                    // NOTE: replace this with some function to calculate the index
+                    int i_file = i_dpl * ps->n_dim + i_dim;
+                    fprintf( file[i_file], "%le %le\n",
+                             real(pol[index][i_dpl][i_dim]),
+                             imag(pol[index][i_dpl][i_dim]) );
+                    // fprintf( file[i_dim], "%le\n", real(pol[index][i_dim]) );
+                }
         }
 }
 
-void io_pol_read( FILE** file, complex** pol, parameters* ps )
+void io_pol_read( FILE** file, complex*** pol, parameters* ps )
 {
     // notice the pullerits' method one can read only a single column
     double re, im;
@@ -287,37 +291,40 @@ void io_pol_read( FILE** file, complex** pol, parameters* ps )
         for (int it = 0; it < ps->nt; it ++) {
             // notice, idx0 is used to locate the start in global array
             long index = (idx0 + is) * (ps->nt) + it;
-            for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                fscanf( file[i_dim], "%le %le", &re, &im );
-                pol[index][i_dim] = complex( re, im );
-                // For seidner's method, cuz ptot is allways real, we can save half storage
-                // fscanf( file[i_dim], "%le", &re );
-                // pol[index][i_dim] = complex( re, 0.0 );
-            }
+            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+                for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+                    // NOTE: replace this with some function to calculate the index
+                    int i_file = i_dpl * ps->n_dim + i_dim;
+                    fscanf( file[i_file], "%le %le", &re, &im );
+                    pol[index][i_dpl][i_dim] = complex( re, im );
+                    // seidner's method, ptot is allways real, we can save half storage
+                    // fscanf( file[i_dim], "%le", &re );
+                    // pol[index][i_dim] = complex( re, 0.0 );
+                }
         }
 }
 
 // one needs two ps: one global one, one for each node.
 // here, pol should be a global array, while ps is for the node
 // ----------------------------------------
-void io_pol_dir_write( para_file::file_type type, complex*** pol_2d,
+void io_pol_dir_write( para_file::file_type type, complex**** pol,
                        int n_dir, char* prefix, parameters *ps )
 {
     // n_dir = ps->seid->n_phase for seidner
     for (int i_dir = 0; i_dir < n_dir; i_dir ++) {
         int file_idx[2] = { i_dir, (int) ps->mpic->rank };
         open_para_file_write( type, prefix, ps, 2, file_idx );
-        io_pol_write( ps->file->mul[type]->fptr, pol_2d[i_dir], ps );
+        io_pol_write( ps->file->mul[type]->fptr, pol[i_dir], ps );
         close_para_file( type, ps );
     }
 }
-void io_pol_dir_read( para_file::file_type type, complex*** pol_2d,
+void io_pol_dir_read( para_file::file_type type, complex**** pol,
                       int n_dir, char* prefix, parameters *ps )
 {
     for (int i_dir = 0; i_dir < n_dir; i_dir ++) {
         int file_idx[2] = { i_dir, (int) ps->mpic->rank };
         open_para_file_read( type, prefix, ps, 2, file_idx );
-        io_pol_read( ps->file->mul[type]->fptr, pol_2d[i_dir], ps );
+        io_pol_read( ps->file->mul[type]->fptr, pol[i_dir], ps );
         close_para_file( type, ps );
     }
 }

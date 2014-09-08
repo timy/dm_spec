@@ -17,7 +17,7 @@ void collect_mpi_pol( char* cfg_file, int n_node );
 
 int main( int argc, char *argv[] )
 {
-    collect_mpi_grid( "../../cfg/parameters.cfg", N_NODE, "../../" );
+    postproc_collect_mpi_grid( "../../cfg/parameters.cfg", N_NODE, "../../" );
     collect_mpi_pol( "../../cfg/parameters.cfg", N_NODE );
 }
 

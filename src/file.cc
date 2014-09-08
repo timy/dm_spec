@@ -77,15 +77,15 @@ void para_file_config( struct config_t* cfg, struct parameters* ps )
     config_lookup_string( cfg, "file.grid_1d", &name );
     set_para_file_one( para_file::GRID_1D, name, ps );
     config_lookup_string( cfg, "file.ppar_1d", &name );
-    set_para_file_mul( para_file::PPAR_1D, name, ps->n_dim, ps );
+    set_para_file_mul( para_file::PPAR_1D, name, (ps->n_dpl*ps->n_dim), ps );
     config_lookup_string( cfg, "file.ptot_1d", &name );
-    set_para_file_mul( para_file::PTOT_1D, name, ps->n_dim, ps );
+    set_para_file_mul( para_file::PTOT_1D, name, (ps->n_dpl*ps->n_dim), ps );
     config_lookup_string( cfg, "file.grid_2d", &name );
     set_para_file_one( para_file::GRID_2D, name, ps );
     config_lookup_string( cfg, "file.ppar_2d", &name );
-    set_para_file_mul( para_file::PPAR_2D, name, ps->n_dim, ps );
+    set_para_file_mul( para_file::PPAR_2D, name, (ps->n_dpl*ps->n_dim), ps );
     config_lookup_string( cfg, "file.ptot_2d", &name );
-    set_para_file_mul( para_file::PTOT_2D, name, ps->n_dim, ps );
+    set_para_file_mul( para_file::PTOT_2D, name, (ps->n_dpl*ps->n_dim), ps );
     config_lookup_string( cfg, "file.orient", &name );
     set_para_file_one( para_file::ORIENT, name, ps );
     config_lookup_string( cfg, "file.config", &name );
@@ -141,8 +141,7 @@ void set_para_file_mul( para_file::file_type type, const char* name,
         f->mul[type]->name = new char*[n_file];
         for (int i_file = 0; i_file < n_file; i_file ++) {
             f->mul[type]->name[i_file] = new char[256];
-            sprintf( f->mul[type]->name[i_file],
-                     "%s%d", name, i_file );
+            sprintf( f->mul[type]->name[i_file], "%s%d", name, i_file );
         }
         // file.mul_node.fptr
         f->mul[type]->fptr = new FILE*[n_file];
@@ -150,15 +149,13 @@ void set_para_file_mul( para_file::file_type type, const char* name,
             f->mul[type]->fptr[i_file] = NULL;
 #ifndef USE_MPI
         for (int i_file = 0; i_file < n_file; i_file ++)
-            printf( "create file file.mul_node: %s\n",
-                    f->mul[type]->name[i_file] );
+            printf( "create file file.mul_node: %s\n", f->mul[type]->name[i_file] );
 #endif
         f->one[type] = NULL;
     }
 }
 
-void file_name_generate( char* name_basic, char* file_name,
-                         int n_idx, int *idx );
+void file_name_generate( char* name_basic, char* file_name, int n_idx, int *idx );
 void open_para_file_read( para_file::file_type type, char *prefix,
                           struct parameters *ps, int n_idx, int *idx )
 {
@@ -175,10 +172,9 @@ void open_para_file_read( para_file::file_type type, char *prefix,
         }
         f1->fptr = fopen( file_name, "r" );
         if (f1->fptr == NULL)
-            error( file_name );
+            error( ps, "%s", file_name );
     }
-    else if (f2 != NULL && f1 == NULL){
-        char str_tmp[64];
+    else if (f2 != NULL && f1 == NULL) {
         for (int i_file = 0; i_file < f2->n_file; i_file ++) {
             file_name_generate( f2->name[i_file], sub_name, n_idx, idx );
             if (prefix == NULL)
@@ -189,11 +185,11 @@ void open_para_file_read( para_file::file_type type, char *prefix,
             }
             f2->fptr[i_file] = fopen( file_name, "r" );
             if (f2->fptr[i_file] == NULL)
-                error( file_name );
+                error( ps, "%s", file_name );
         }
     }
     else {
-        error( "something is wrong with files..." );
+        error( ps, "%s", "something is wrong with files..." );
     }
 
 }
@@ -205,18 +201,17 @@ void open_para_file_write( para_file::file_type type, char *prefix,
     para_file::mul_node* f2 = ps->file->mul[type];
     if (f1 != NULL && f2 == NULL) {
         file_name_generate( f1->name, sub_name, n_idx, idx );
-        if (prefix == NULL) {
-            strcpy( file_name, sub_name );}
+        if (prefix == NULL)
+            strcpy( file_name, sub_name );
         else {
             strcpy( file_name, prefix );
             strcat( file_name, sub_name );
         }
         f1->fptr = fopen( file_name, "w" );
         if (f1->fptr == NULL)
-            error( file_name );
+            error( ps, "%s", file_name );
     }
-    else if (f2 != NULL && f1 == NULL){
-        char str_tmp[64];
+    else if (f2 != NULL && f1 == NULL) {
         for (int i_file = 0; i_file < f2->n_file; i_file ++) {
             file_name_generate( f2->name[i_file], sub_name, n_idx, idx );
             if (prefix == NULL)
@@ -227,16 +222,15 @@ void open_para_file_write( para_file::file_type type, char *prefix,
             }
             f2->fptr[i_file] = fopen( file_name, "w" );
             if (f2->fptr[i_file] == NULL)
-                error( file_name );
+                error( ps, "%s", file_name );
         }
     }
     else {
-        error( "something is wrong with files..." );
+        error( ps, "%s", "something is wrong with files..." );
     }
 }
 
-void file_name_generate( char* name_basic, char* file_name,
-                         int n_idx, int *idx )
+void file_name_generate( char* name_basic, char* file_name, int n_idx, int *idx )
 {
     char str_tmp[64];
     // para_file::one_node *f = ps->file->one[type];
@@ -253,8 +247,7 @@ void file_name_generate( char* name_basic, char* file_name,
     strcat( file_name, ".dat" );
 }
 
-void close_para_file( para_file::file_type type,
-                      struct parameters *ps )
+void close_para_file( para_file::file_type type, struct parameters *ps )
 {
     para_file::one_node* f1 = ps->file->one[type];
     para_file::mul_node* f2 = ps->file->mul[type];
@@ -268,7 +261,7 @@ void close_para_file( para_file::file_type type,
                 fclose( f2->fptr[i_file] );
     }
     else {
-        error( "something is wrong with files..." );
+        error( ps, "%s", "something is wrong with files..." );
     }
 }
 

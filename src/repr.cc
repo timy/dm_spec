@@ -84,7 +84,7 @@ void para_repr_ini( config_t* cfg, parameters* ps )
         }
     }
     else
-        error( count );
+        error( ps, "%d", count );
 }
 
 void para_repr_del( parameters *para )

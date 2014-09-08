@@ -2,7 +2,7 @@ DIR_BASE	=	$(shell pwd)
 EXE		=	$(DIR_BASE)/test
 include Makefile.in
 
-all: build_src build_ana
+all: build_src #build_ana
 
 build_src:
 	cd $(DIR_SRC) && make

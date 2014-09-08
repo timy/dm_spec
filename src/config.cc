@@ -10,7 +10,7 @@ void config_file_ini( config_t *cfg, const char* file_name )
         print( config_error_line( cfg ) );
         print( config_error_text( cfg ) );
         config_destroy( cfg );
-        error_at( "config_file_ini" );
+        fprintf( stderr, "ERROR: config_file_ini\n" );
     }
 }
 

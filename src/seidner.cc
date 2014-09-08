@@ -113,14 +113,15 @@ void set_para_seidner( parameters *ps )
 }
 
 //////////////////////////////////
-complex*** prepare_pol_array_seidner( int dim, parameters* ps )
+complex**** prepare_pol_array_seidner( int dim, parameters* ps )
 {
-    complex*** pol = new complex** [ps->seid->n_phase];
-    for (int ip = 0; ip < ps->seid->n_phase; ip ++)
-        pol[ip] = prepare_pol_array( dim, ps );
+    complex**** pol = new complex*** [ps->seid->n_phase];
+    for (int ip = 0; ip < ps->seid->n_phase; ip ++) {
+        pol[ip] = (complex***) prepare_pol_array( dim, ps );
+    }
     return pol;
 }
-void clean_pol_array_seidner( int dim, complex*** pol, parameters* ps )
+void clean_pol_array_seidner( int dim, complex**** pol, parameters* ps )
 {
     for (int ip = 0; ip < ps->seid->n_phase; ip ++)
         clean_pol_array( dim, pol[ip], ps );
@@ -128,7 +129,7 @@ void clean_pol_array_seidner( int dim, complex*** pol, parameters* ps )
 }
 
 
-void calc_ptot_seidner( complex ***ptot, parameters *ps )
+void calc_ptot_seidner( complex ****ptot, parameters *ps )
 {
     double **rho = prepare_rho_array( ps );
     for (int iphi = 0; iphi < ps->seid->n_phase; iphi ++) {
@@ -141,19 +142,21 @@ void calc_ptot_seidner( complex ***ptot, parameters *ps )
     clean_rho_array( rho, ps );
 }
 
-void calc_ppar_seidner( complex*** ppar, complex*** ptot, parameters *ps )
+void calc_ppar_seidner( complex**** ppar, complex**** ptot, parameters *ps )
 {
     for (int i_dir = 0; i_dir < ps->seid->n_phase; i_dir ++)
         for (long it = 0; it < ps->nt; it ++)
-            for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                ppar[i_dir][it][i_dim] = complex( 0.0, 0.0 );
-                for (int i_phi = 0; i_phi < ps->seid->n_phase; i_phi ++)
-                    ppar[i_dir][it][i_dim] +=
-                        ps->seid->pnl_expr[i_dir][i_phi] * ptot[i_phi][it][i_dim];
-            }
-    fprintf( stdout, "%s: %d\n", __FILE__, __LINE__ );
-    for (int i_phi = 0; i_phi < ps->seid->n_phase; i_phi ++)
-        fprintf( stdout, "%d: %.15f\n", i_phi, real(ps->seid->pnl_expr[14][i_phi]) );
+            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+                for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+                    ppar[i_dir][it][i_dpl][i_dim] = complex( 0.0, 0.0 );
+                    for (int i_phi = 0; i_phi < ps->seid->n_phase; i_phi ++)
+                        ppar[i_dir][it][i_dpl][i_dim] +=
+                            ps->seid->pnl_expr[i_dir][i_phi] *
+                            ptot[i_phi][it][i_dpl][i_dim];
+                }
+    // fprintf( stdout, "%s: %d\n", __FILE__, __LINE__ );
+    // for (int i_phi = 0; i_phi < ps->seid->n_phase; i_phi ++)
+    //     fprintf( stdout, "%d: %.15f\n", i_phi, real(ps->seid->pnl_expr[14][i_phi]) );
 
 }
 
@@ -226,13 +229,13 @@ void prepare_seidner( parameters *ps )
     // LU factorization of a matrix A using partial pivoting with row interchanges
     zgetrf_( &(ps->seid->n_phase), &(ps->seid->n_phase), PCoef, &(ps->seid->n_phase),
              ipiv, &ierr );
-    if (ierr != 0) error( ierr );
+    if (ierr != 0) error( ps, "%d", ierr );
 
     complex *work = new complex[lwork];
 
     // compute the inverse of a matrix using the LU factorization computed by zgetrf_
     zgetri_( &(ps->seid->n_phase), PCoef, &(ps->seid->n_phase), ipiv, work, &lwork, &ierr );
-    if (ierr != 0) error( ierr );
+    if (ierr != 0) error( ps, "%d", ierr );
     delete[] work;
     delete[] ipiv;
 

@@ -10,20 +10,11 @@
                   << " (" << __FILE__ << ", L" << __LINE__ << ")"       \
                   << "\t" << #x << " = " << x << std::endl; }
 
-#define error_at(s) {                                                   \
-        std::cout << "ERROR@ " << s << ":"                              \
-                  << " (" << __FILE__ << ", L" << __LINE__ << ")"       \
-                  << std::endl; exit(-1); }
-
-#define error(x) {                                                      \
-        std::cout << "ERROR: "                                          \
-                  << " (" << __FILE__ << ", L" << __LINE__ << ")"       \
-                  << "\t" << #x << " = " << x << std::endl; exit(-1); }
-
 // pointer to ps is needed here
-#define error_log( ps, msg ) {                                  \
+#define error( ps, fmt, ... ) {                                 \
         fprintf( (ps)->file->one[para_file::LOG]->fptr,         \
-                 "%s L%d: %s\n", __FILE__, __LINE__, msg );     \
+                 "ERROR %s (L%d): " fmt "\n",                   \
+                 __FILE__, __LINE__, ## __VA_ARGS__ );          \
     }
 
 #include <fstream>

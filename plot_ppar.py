@@ -7,9 +7,9 @@ import pymod_indx, pymod_data, pymod_plot
 handle, legend = [], []
 ax = pymod_plot.plot_1d_init()
 
-func = np.real
+func = np.abs
 t = np.loadtxt( "res/time.dat" )
-data = np.loadtxt( "res/ppar_1d2_124_0.dat" )
+data = np.loadtxt( "res/ppar_1d2_4_0.dat" )
 label = '[ 1,-2, 2]'
 pymod_data.plot_signal_1d( t, data, func, handle, legend, ax,
                            obj='p', t0=-100, lim=[-300.0, 546],
