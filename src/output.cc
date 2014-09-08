@@ -114,15 +114,32 @@ void output_ef_EuvM( FILE* file, parameters *ps )
 
 // output general information
 // used for para_init_config_write and para_init_info_write
-#define print_info( file, x ) {                                    \
+#define print_info( file, x ) {                                 \
         fprintf( file, "%s,L%d: ", __FILE__, __LINE__ );        \
         dm_fprintf( file, #x );                                 \
         fprintf( file, " = " );                                 \
         dm_fprintf( file, x );                                  \
         fputc( '\n', file );                                    \
     }
-#define display_section( file, x ) {              \
+#define display_section( file, x ) {            \
         fprintf( file, "\n%s\n", x ); }
+
+void dm_fprintf( FILE* file, int d )
+{
+    fprintf( file, "%d", d );
+}
+void dm_fprintf( FILE* file, long d )
+{
+    fprintf( file, "%ld", d );
+}
+void dm_fprintf( FILE* file, double d )
+{
+    fprintf( file, "%le", d );
+}
+void dm_fprintf( FILE* file, const char* d )
+{
+    fprintf( file, "%s", d );
+}
 
 void output_info( para_file::file_type type, parameters* ps )
 {

@@ -12,12 +12,6 @@ void open_para_file( para_file::file_type type, char *prefix, parameters* ps,
                      int nIdx, char** lb, int *idx, const char* rw );
 void close_para_file( para_file::file_type type, parameters* ps );
 
-typedef struct _IO_FILE FILE;
 FILE* get_fptr_from_idxSyn( para_file::file_type type, int* idx, parameters* ps );
-
-void dm_fprintf( FILE* file, int d );
-void dm_fprintf( FILE* file, long d );
-void dm_fprintf( FILE* file, double d );
-void dm_fprintf( FILE* file, const char* d );
 
 #endif

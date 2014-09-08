@@ -254,23 +254,3 @@ FILE* get_fptr_from_idxSyn( para_file::file_type type, int* idx, parameters* ps 
     }
     return item->f[index]->fptr;
 }
-
-void dm_fprintf( FILE* file, int d )
-{
-    fprintf( file, "%d", d );
-}
-
-void dm_fprintf( FILE* file, long d )
-{
-    fprintf( file, "%ld", d );
-}
-
-void dm_fprintf( FILE* file, double d )
-{
-    fprintf( file, "%le", d );
-}
-
-void dm_fprintf( FILE* file, const char* d )
-{
-    fprintf( file, "%s", d );
-}
