@@ -4,8 +4,12 @@
 #include <cstdio>
 #include <cstring>
 
+#define MAX_NUMBER_FILE_VAR     8
+#define MAX_LENGTH_FILE_LABEL   16
+#define MAX_LENGTH_FILE_NAME    256
 
 void para_file_config( struct config_t* cfg, struct parameters* ps );
+void genFileNameSyn( para_file::file_item* item );
 
 void para_file_ini( struct config_t* cfg, struct parameters *ps )
 {
@@ -16,255 +20,240 @@ void para_file_ini( struct config_t* cfg, struct parameters *ps )
 void para_file_del( struct parameters *ps )
 {
     para_file *f = ps->file;
-    // loop over all file.one_node
-    std::map<para_file::file_type, para_file::one_node*>::iterator it1;
-    for (it1 = f->one.begin(); it1 != f->one.end(); ++ it1) {
-        if (it1->second != NULL) {
-            // file.one_node.name
-            if (it1->second->name != NULL) {
+    std::map<para_file::file_type, para_file::file_item*>::iterator iter;
+    for (iter = f->item.begin(); iter != f->item.end(); ++ iter) {
+        para_file::file_item* item = iter->second;
+        if (item != NULL) {
+            for (int iPtr = 0; iPtr < item->nPtrSyn; iPtr ++) {
 #ifndef USE_MPI
-                printf( "delete file.one_node.name: %s\n",
-                        it1->second->name );
+                printf( "delete file.item.f.name: %s\n", item->f[iPtr]->name );
 #endif
-                delete[] it1->second->name;
+                delete[] item->f[iPtr]->name;
+                delete item->f[iPtr];
             }
-            it1->second->name = NULL;
-            // file.one_node.fptr
-            it1->second->fptr = NULL;
-            // file.one_node
-            delete it1->second;
+            delete[] item->f;
+            for (int iVar = 0; iVar < item->nVarSyn; iVar ++)
+                delete[] item->lbVarSyn[iVar];
+            delete[] item->lbVarSyn;
+            delete[] item->szVarSyn;
+            delete[] item->name;
+            delete item;
         }
     }
-
-    // loop over all file.mul_node
-    std::map<para_file::file_type, para_file::mul_node*>::iterator it2;
-    for (it2 = f->mul.begin(); it2 != f->mul.end(); ++ it2) {
-        if (it2->second != NULL) {
-            int n_file = it2->second->n_file;
-            // file.mul_node.name
-            for (int i_file = 0; i_file < n_file; i_file ++) {
-#ifndef USE_MPI
-                printf( "delete file.mul_node.name: %s\n",
-                        it2->second->name[i_file] );
-#endif
-                delete[] it2->second->name[i_file];
-            }
-            delete[] it2->second->name;
-            // file.mul_node.fptr
-            if (it2->second->fptr != NULL)
-                delete[] it2->second->fptr;
-            // file.mul_node
-            delete it2->second;
-        }
-    }
-
-    // file
     delete ps->file;
 }
 
 #include <libconfig.h>
 void para_file_config( struct config_t* cfg, struct parameters* ps )
 {
+    // temporary variables
     const char* name = NULL;
+    int* szVarSyn = new int [MAX_NUMBER_FILE_VAR];
+    char** lbVarSyn = new char* [MAX_NUMBER_FILE_VAR];
+    for (int iVar = 0; iVar < MAX_NUMBER_FILE_VAR; iVar ++)
+        lbVarSyn[iVar] = new char [MAX_LENGTH_FILE_LABEL];
+
     config_lookup_string( cfg, "file.dm", &name );
-    set_para_file_one( para_file::DM, name, ps );
+    set_para_file( para_file::DM, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.ef", &name );
-    set_para_file_one( para_file::EF, name, ps );
+    set_para_file( para_file::EF, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.time", &name );
-    set_para_file_one( para_file::TIME, name, ps );
+    set_para_file( para_file::TIME, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.info", &name );
-    set_para_file_one( para_file::INFO, name, ps );
+    set_para_file( para_file::INFO, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.grid_1d", &name );
-    set_para_file_one( para_file::GRID_1D, name, ps );
+    set_para_file( para_file::GRID_1D, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.ppar_1d", &name );
-    set_para_file_mul( para_file::PPAR_1D, name, (ps->n_dpl*ps->n_dim), ps );
+    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
+    set_para_file( para_file::PPAR_1D, name, 2, szVarSyn, lbVarSyn, ps );
+
     config_lookup_string( cfg, "file.ptot_1d", &name );
-    set_para_file_mul( para_file::PTOT_1D, name, (ps->n_dpl*ps->n_dim), ps );
+    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
+    set_para_file( para_file::PTOT_1D, name, 2, szVarSyn, lbVarSyn, ps );
+
     config_lookup_string( cfg, "file.grid_2d", &name );
-    set_para_file_one( para_file::GRID_2D, name, ps );
+    set_para_file( para_file::GRID_2D, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.ppar_2d", &name );
-    set_para_file_mul( para_file::PPAR_2D, name, (ps->n_dpl*ps->n_dim), ps );
+    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
+    set_para_file( para_file::PPAR_2D, name, 2, szVarSyn, lbVarSyn, ps );
+
     config_lookup_string( cfg, "file.ptot_2d", &name );
-    set_para_file_mul( para_file::PTOT_2D, name, (ps->n_dpl*ps->n_dim), ps );
+    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
+    set_para_file( para_file::PTOT_2D, name, 2, szVarSyn, lbVarSyn, ps );
+
     config_lookup_string( cfg, "file.orient", &name );
-    set_para_file_one( para_file::ORIENT, name, ps );
+    set_para_file( para_file::ORIENT, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.config", &name );
-    set_para_file_one( para_file::CONFIG, name, ps );
+    set_para_file( para_file::CONFIG, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.kuvl", &name );
-    set_para_file_one( para_file::KUVL, name, ps );
+    set_para_file( para_file::KUVL, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.kuvm", &name );
-    set_para_file_one( para_file::KUVM, name, ps );
+    set_para_file( para_file::KUVM, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.kl", &name );
-    set_para_file_one( para_file::KL, name, ps );
+    set_para_file( para_file::KL, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.km", &name );
-    set_para_file_one( para_file::KM, name, ps );
+    set_para_file( para_file::KM, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.euvl", &name );
-    set_para_file_one( para_file::EUVL, name, ps );
+    set_para_file( para_file::EUVL, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.euvm", &name );
-    set_para_file_one( para_file::EUVM, name, ps );
+    set_para_file( para_file::EUVM, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.rl", &name );
-    set_para_file_one( para_file::RL, name, ps );
+    set_para_file( para_file::RL, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.rm", &name );
-    set_para_file_one( para_file::RM, name, ps );
+    set_para_file( para_file::RM, name, 0, NULL, NULL, ps );
+
     config_lookup_string( cfg, "file.log", &name );
-    set_para_file_one( para_file::LOG, name, ps );
+    set_para_file( para_file::LOG, name, 0, NULL, NULL, ps );
+
+    // delete temporary variables
+    for (int iVar = 0; iVar < MAX_NUMBER_FILE_VAR; iVar ++)
+        delete[] lbVarSyn[iVar];
+    delete[] lbVarSyn;
+    delete[] szVarSyn;
 }
 
-void set_para_file_one( para_file::file_type type, const char* name,
-                        struct parameters *ps)
+void set_para_file( para_file::file_type type, const char* name,
+                    int nVar, int* szVar, char** lbVar,
+                    parameters* ps )
 {
-    para_file *f = ps->file;
-    // file.one_node
-    if (f->one[type] == NULL) {
-        f->one[type] = new para_file::one_node;
-        f->one[type]->n_file = 1;
-        // file.one_node.name
-        f->one[type]->name = new char[256];
-        strcpy( f->one[type]->name, name );
-        // file.one_node.fptr
-        f->one[type]->fptr = NULL;
-#ifndef USE_MPI
-        printf( "create file.one_node: %s\n", f->one[type]->name );
-#endif
-        f->mul[type] = NULL;
+    if (ps->file->item[type] != NULL) {
+        fprintf( stderr, "Type %d (%s) can only be set once.\n", type, name );
+        return;
+    }
+    para_file::file_item* item = ps->file->item[type] = new para_file::file_item;
+    // name
+    item->name = new char [MAX_LENGTH_FILE_NAME];
+    strcpy( item->name, name );
+    // nVarSyn
+    item->nVarSyn = nVar;
+    // szVarSyn
+    item->szVarSyn = new int [nVar];
+    for (int iVar = 0; iVar < nVar; iVar ++)
+        item->szVarSyn[iVar] = szVar[iVar];
+    // lbVarSyn
+    item->lbVarSyn = new char* [nVar];
+    for (int iVar = 0; iVar < nVar; iVar ++) {
+        item->lbVarSyn[iVar] = new char [MAX_LENGTH_FILE_LABEL];
+        strcpy( item->lbVarSyn[iVar], lbVar[iVar] );
+    }
+    // nPtrSyn
+    int nPtrSyn = 1;
+    for (int iVar = 0; iVar < nVar; iVar ++)
+        nPtrSyn *= szVar[iVar];
+    item->nPtrSyn = nPtrSyn;
+    // node f
+    item->f = new para_file::file_item::node* [nPtrSyn];
+    for (int iPtr = 0; iPtr < nPtrSyn; iPtr ++) {
+        item->f[iPtr] = new para_file::file_item::node;
+        item->f[iPtr]->name = new char [MAX_LENGTH_FILE_NAME];
+        item->f[iPtr]->fptr = NULL;
+    }
+    genFileNameSyn( item );
+}
+
+void fmtFileNameSyn( int count, int* idx,  para_file::file_item* item )
+{
+    strcpy( item->f[count]->name, item->name );
+    for (int iVar = 0; iVar < item->nVarSyn; iVar ++) {
+        sprintf( item->f[count]->name, "%s_%s%d",
+                 item->f[count]->name, item->lbVarSyn[iVar], idx[iVar] );
     }
 }
 
-void set_para_file_mul( para_file::file_type type, const char* name,
-                        int n_file, struct parameters *ps )
+void walk( int lvl, int nLvl, int* size, int* idx, int* count,
+           void (*func)( int, int*, para_file::file_item* ),
+           para_file::file_item* item )
 {
-    para_file *f = ps->file;
-    if (f->mul[type] == NULL) {
-        f->mul[type] = new para_file::mul_node;
-        f->mul[type]->n_file = n_file;
-        // file.mul_node.name
-        f->mul[type]->name = new char*[n_file];
-        for (int i_file = 0; i_file < n_file; i_file ++) {
-            f->mul[type]->name[i_file] = new char[256];
-            sprintf( f->mul[type]->name[i_file], "%s%d", name, i_file );
-        }
-        // file.mul_node.fptr
-        f->mul[type]->fptr = new FILE*[n_file];
-        for (int i_file = 0; i_file < n_file; i_file ++)
-            f->mul[type]->fptr[i_file] = NULL;
-#ifndef USE_MPI
-        for (int i_file = 0; i_file < n_file; i_file ++)
-            printf( "create file file.mul_node: %s\n", f->mul[type]->name[i_file] );
-#endif
-        f->one[type] = NULL;
-    }
-}
-
-void file_name_generate( char* name_basic, char* file_name, int n_idx, int *idx );
-void open_para_file_read( para_file::file_type type, char *prefix,
-                          struct parameters *ps, int n_idx, int *idx )
-{
-    char file_name[512], sub_name[256];
-    para_file::one_node* f1 = ps->file->one[type];
-    para_file::mul_node* f2 = ps->file->mul[type];
-    if (f1 != NULL && f2 == NULL) {
-        file_name_generate( f1->name, sub_name, n_idx, idx );
-        if (prefix == NULL)
-            strcpy( file_name, sub_name );
-        else {
-            strcpy( file_name, prefix );
-            strcat( file_name, sub_name );
-        }
-        f1->fptr = fopen( file_name, "r" );
-        if (f1->fptr == NULL)
-            error( ps, "%s", file_name );
-    }
-    else if (f2 != NULL && f1 == NULL) {
-        for (int i_file = 0; i_file < f2->n_file; i_file ++) {
-            file_name_generate( f2->name[i_file], sub_name, n_idx, idx );
-            if (prefix == NULL)
-                strcpy( file_name, sub_name );
-            else {
-                strcpy( file_name, prefix );
-                strcat( file_name, sub_name );
-            }
-            f2->fptr[i_file] = fopen( file_name, "r" );
-            if (f2->fptr[i_file] == NULL)
-                error( ps, "%s", file_name );
+    if (lvl == nLvl) {
+        func( *count, idx, item );
+        (*count) ++;
+        return;
+    } else {
+        for (int i = 0; i < size[lvl]; i ++) {
+            idx[lvl] = i;
+            walk( lvl+1, nLvl, size, idx, count, func, item );
         }
     }
-    else {
-        error( ps, "%s", "something is wrong with files..." );
-    }
-
 }
-void open_para_file_write( para_file::file_type type, char *prefix,
-                           struct parameters *ps, int n_idx, int *idx )
+
+void genFileNameSyn( para_file::file_item* item )
 {
-    char file_name[512], sub_name[256];
-    para_file::one_node* f1 = ps->file->one[type];
-    para_file::mul_node* f2 = ps->file->mul[type];
-    if (f1 != NULL && f2 == NULL) {
-        file_name_generate( f1->name, sub_name, n_idx, idx );
-        if (prefix == NULL)
-            strcpy( file_name, sub_name );
-        else {
-            strcpy( file_name, prefix );
-            strcat( file_name, sub_name );
-        }
-        f1->fptr = fopen( file_name, "w" );
-        if (f1->fptr == NULL)
-            error( ps, "%s", file_name );
-    }
-    else if (f2 != NULL && f1 == NULL) {
-        for (int i_file = 0; i_file < f2->n_file; i_file ++) {
-            file_name_generate( f2->name[i_file], sub_name, n_idx, idx );
-            if (prefix == NULL)
-                strcpy( file_name, sub_name );
-            else {
-                strcpy( file_name, prefix );
-                strcat( file_name, sub_name );
-            }
-            f2->fptr[i_file] = fopen( file_name, "w" );
-            if (f2->fptr[i_file] == NULL)
-                error( ps, "%s", file_name );
-        }
-    }
-    else {
-        error( ps, "%s", "something is wrong with files..." );
-    }
+    int* idx = new int [item->nVarSyn];
+    int count = 0;
+    walk( 0, item->nVarSyn, item->szVarSyn, idx, &count, fmtFileNameSyn, item );
+    delete[] idx;
 }
 
-void file_name_generate( char* name_basic, char* file_name, int n_idx, int *idx )
+void genFileNameAsy( para_file::file_item* item, char* prefix,
+                     int iPtr, int nIdx, char** lb, int* idx, char* fileName )
 {
-    char str_tmp[64];
-    // para_file::one_node *f = ps->file->one[type];
-
-    // e.g.: file_name = "res/dm"
-    strcpy( file_name, name_basic );
-
-    // e.g.: file_name = "res/dm_ 2_16"
-    for (int i = 0; i < n_idx; i ++) {
-        sprintf( str_tmp, "_%d", idx[i] );
-        strcat( file_name, str_tmp );
+    if (prefix == NULL) {
+        strcpy( fileName, item->f[iPtr]->name );
+    } else {
+        strcpy( fileName, prefix );
+        strcat( fileName, item->f[iPtr]->name );
     }
-    // e.g.: file_name = "res/dm_ 2_16.dat"
-    strcat( file_name, ".dat" );
+    for (int i = 0; i < nIdx; i ++) {
+        if (lb == NULL)
+            sprintf( fileName, "%s_%d", fileName, idx[i] );
+        else
+            sprintf( fileName, "%s_%s%d", fileName, lb[i], idx[i] );
+    }
+    strcat( fileName, ".dat" );
 }
 
-void close_para_file( para_file::file_type type, struct parameters *ps )
+void open_para_file( para_file::file_type type, char* prefix, parameters* ps,
+                     int nIdx, char** lb, int *idx, const char* rw )
 {
-    para_file::one_node* f1 = ps->file->one[type];
-    para_file::mul_node* f2 = ps->file->mul[type];
-    if (f1 != NULL && f2 == NULL) {
-        if (f1->fptr != NULL)
-            fclose( f1->fptr );
-    }
-    else if (f2 != NULL && f1 == NULL) {
-        for (int i_file = 0; i_file < f2->n_file; i_file ++)
-            if (f2->fptr[i_file] != NULL)
-                fclose( f2->fptr[i_file] );
-    }
-    else {
-        error( ps, "%s", "something is wrong with files..." );
+    char fileName[MAX_LENGTH_FILE_NAME];
+    para_file::file_item* item = ps->file->item[type];
+    for (int iPtr = 0; iPtr < item->nPtrSyn; iPtr ++) {
+        genFileNameAsy( item, prefix, iPtr, nIdx, lb, idx, fileName );
+        item->f[iPtr]->fptr = fopen( fileName, rw );
+        if (item->f[iPtr]->fptr == NULL)
+            fprintf( stderr, "Cannot open file %s\n", fileName );
     }
 }
 
+void close_para_file( para_file::file_type type, parameters* ps )
+{
+    para_file::file_item* item = ps->file->item[type];
+    for (int iPtr = 0; iPtr < item->nPtrSyn; iPtr ++) {
+        if (item->f[iPtr]->fptr != NULL)
+            fclose( item->f[iPtr]->fptr );
+    }
+}
+
+FILE* get_fptr_from_idxSyn( para_file::file_type type, int* idx, parameters* ps )
+{
+    para_file::file_item* item = ps->file->item[type];
+    int index = 0; int factor = 1;
+    for (int iVar = 0; iVar < item->nVarSyn; iVar ++) {
+        int id = item->nVarSyn - 1 - iVar;
+        index += factor * idx[id];
+        factor *= item->szVarSyn[id];
+    }
+    return item->f[index]->fptr;
+}
 
 void dm_fprintf( FILE* file, int d )
 {

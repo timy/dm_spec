@@ -126,8 +126,8 @@ void output_ef_EuvM( FILE* file, parameters *ps )
 
 void output_info( para_file::file_type type, parameters* ps )
 {
-    open_para_file_write( type, NULL, ps, 0, NULL );
-    FILE* file = ps->file->one[type]->fptr;
+    open_para_file( type, NULL, ps, 0, NULL, NULL, "w" );
+    FILE* file = ps->file->item[type]->f[0]->fptr;
 
     display_section( file, "basic" );
     print_info( file, ps->n_dim );
@@ -213,12 +213,12 @@ void output_info( para_file::file_type type, parameters* ps )
 
 void io_rl_write( parameters* ps ) {
     for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-        fprintf( ps->file->one[para_file::RL]->fptr, "%le ", ps->pos[i_dim] );
-    fprintf( ps->file->one[para_file::RL]->fptr, "\n" );
+        fprintf( ps->file->item[para_file::RL]->f[0]->fptr, "%le ", ps->pos[i_dim] );
+    fprintf( ps->file->item[para_file::RL]->f[0]->fptr, "\n" );
 }
 void io_rl_read( parameters* ps ) {
     for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-        fscanf( ps->file->one[para_file::RL]->fptr, "%le", &(ps->pos[i_dim]) );
+        fscanf( ps->file->item[para_file::RL]->f[0]->fptr, "%le", &(ps->pos[i_dim]) );
 }
 
 //////////////////////////// Grid ////////////////////////////////
@@ -232,9 +232,9 @@ void io_grid_write( para_file::file_type type, double *s,
                     char* prefix, parameters *ps )
 {
     int file_idx[1] = { (int) ps->mpic->rank };
-    open_para_file_write( type, prefix, ps, 1, file_idx );
+    open_para_file( type, prefix, ps, 1, NULL, file_idx, "w" );
     for (long is = 0; is < ps->mpic->njob; is ++)
-        fprintf( ps->file->one[type]->fptr, "%le\n", s[is] );
+        fprintf( ps->file->item[type]->f[0]->fptr, "%le\n", s[is] );
     close_para_file( type, ps );
 }
 
@@ -242,10 +242,10 @@ void io_grid_read( para_file::file_type type, double *s,
                    char* prefix, parameters *ps )
 {
     int file_idx[1] = { (int) ps->mpic->rank };
-    open_para_file_read( type, prefix, ps, 1, file_idx );
+    open_para_file( type, prefix, ps, 1, NULL, file_idx, "r" );
     for (long is = 0; is < ps->mpic->njob; is ++) {
         long index = ps->mpic->idx0 + is;
-        fscanf( ps->file->one[type]->fptr, "%le", &s[index] );
+        fscanf( ps->file->item[type]->f[0]->fptr, "%le", &s[index] );
     }
     close_para_file( type, ps );
 }
@@ -258,20 +258,22 @@ void io_grid_read( para_file::file_type type, double *s,
 // For the same variables, 3 files store data for 3 coordinates
 ////////////////////////////////////////////////////////////
 
-void io_pol_write( FILE** file, complex*** pol, parameters* ps )
+void io_pol_write( para_file::file_type type, complex*** pol, parameters* ps )
 {
     // here one should notice, for pullerits' method, ptot is real, one can choose
     // output only the real part to save half storage, then column no.=1
     // but when one needs post-process, one output both the real & imag parts
+    int idx[2]; // { i_dpl, i_dim }
     long ns = ps->mpic->njob;
     for (int is = 0; is < ns; is ++)
         for (int it = 0; it < ps->nt; it ++) {
             long index = is * (ps->nt) + it;
             for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                    // NOTE: replace this with some function to calculate the index
-                    int i_file = i_dpl * ps->n_dim + i_dim;
-                    fprintf( file[i_file], "%le %le\n",
+                    // TODO: reverse the loop order so that we have better performance
+                    idx[0] = i_dpl; idx[1] = i_dim;
+                    FILE* fptr = get_fptr_from_idxSyn( type, idx, ps );
+                    fprintf( fptr, "%le %le\n",
                              real(pol[index][i_dpl][i_dim]),
                              imag(pol[index][i_dpl][i_dim]) );
                     // fprintf( file[i_dim], "%le\n", real(pol[index][i_dim]) );
@@ -279,9 +281,10 @@ void io_pol_write( FILE** file, complex*** pol, parameters* ps )
         }
 }
 
-void io_pol_read( FILE** file, complex*** pol, parameters* ps )
+void io_pol_read( para_file::file_type type, complex*** pol, parameters* ps )
 {
     // notice the pullerits' method one can read only a single column
+    int idx[2];
     double re, im;
     long ns = ps->mpic->njob;
     long idx0 = ps->mpic->idx0;
@@ -294,8 +297,9 @@ void io_pol_read( FILE** file, complex*** pol, parameters* ps )
             for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
                     // NOTE: replace this with some function to calculate the index
-                    int i_file = i_dpl * ps->n_dim + i_dim;
-                    fscanf( file[i_file], "%le %le", &re, &im );
+                    idx[0] = i_dpl; idx[1] = i_dim;
+                    FILE* fptr = get_fptr_from_idxSyn( type, idx, ps );
+                    fscanf( fptr, "%le %le", &re, &im );
                     pol[index][i_dpl][i_dim] = complex( re, im );
                     // seidner's method, ptot is allways real, we can save half storage
                     // fscanf( file[i_dim], "%le", &re );
@@ -313,8 +317,8 @@ void io_pol_dir_write( para_file::file_type type, complex**** pol,
     // n_dir = ps->seid->n_phase for seidner
     for (int i_dir = 0; i_dir < n_dir; i_dir ++) {
         int file_idx[2] = { i_dir, (int) ps->mpic->rank };
-        open_para_file_write( type, prefix, ps, 2, file_idx );
-        io_pol_write( ps->file->mul[type]->fptr, pol[i_dir], ps );
+        open_para_file( type, prefix, ps, 2, NULL, file_idx, "w" );
+        io_pol_write( type, pol[i_dir], ps );
         close_para_file( type, ps );
     }
 }
@@ -323,8 +327,8 @@ void io_pol_dir_read( para_file::file_type type, complex**** pol,
 {
     for (int i_dir = 0; i_dir < n_dir; i_dir ++) {
         int file_idx[2] = { i_dir, (int) ps->mpic->rank };
-        open_para_file_read( type, prefix, ps, 2, file_idx );
-        io_pol_read( ps->file->mul[type]->fptr, pol[i_dir], ps );
+        open_para_file( type, prefix, ps, 2, NULL, file_idx, "r" );
+        io_pol_read( type, pol[i_dir], ps );
         close_para_file( type, ps );
     }
 }

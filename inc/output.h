@@ -65,8 +65,10 @@ void output_pol_2d( para_file::file_type type, U pol, long ns,
 void io_rl_write( struct parameters* ps );
 void io_rl_read( struct parameters* ps );
 
-void io_pol_write( FILE** file, std::complex<double>*** pol, struct parameters* ps );
-void io_pol_read( FILE** file, std::complex<double>*** pol, struct parameters* ps );
+void io_pol_write( para_file::file_type type, std::complex<double>*** pol,
+                   struct parameters* ps );
+void io_pol_read( para_file::file_type type, std::complex<double>*** pol,
+                  struct parameters* ps );
 
 void io_pol_dir_write( para_file::file_type type, std::complex<double>**** pol_2d,
                        int n_dir, char* prefix, struct parameters *ps );

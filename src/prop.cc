@@ -28,8 +28,8 @@ void prop( para_eom *peom )
 
 #ifndef USE_MPI
     int file_idx[1] = { peom->iphi };
-    open_para_file_write( para_file::DM, NULL, ps, 1, file_idx );
-    open_para_file_write( para_file::EF, NULL, ps, 1, file_idx );
+    open_para_file( para_file::DM, NULL, ps, 1, NULL, file_idx, "w" );
+    open_para_file( para_file::EF, NULL, ps, 1, NULL, file_idx, "w" );
 #endif
 
     eom_init_cond( y, peom );

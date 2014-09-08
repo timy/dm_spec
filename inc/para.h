@@ -124,20 +124,36 @@ struct para_file {
         LOG
     };
 
-    struct one_node {
-        int n_file;
+    struct file_item {
         char* name;
-        FILE* fptr;
+
+        int nVarSyn;
+        int* szVarSyn;
+        char** lbVarSyn;
+        int nPtrSyn;
+
+        struct node {
+            char* name;
+            FILE* fptr;
+        } **f;
     };
 
-    struct mul_node {
-        int n_file;
-        char** name;
-        FILE** fptr;
-    };
+    std::map<file_type, file_item*> item;
 
-    std::map<file_type, one_node*> one;
-    std::map<file_type, mul_node*> mul;
+    // struct one_node {
+    //     int n_file;
+    //     char* name;
+    //     FILE* fptr;
+    // };
+
+    // struct mul_node {
+    //     int n_file;
+    //     char** name;
+    //     FILE** fptr;
+    // };
+
+    // std::map<file_type, one_node*> one;
+    // std::map<file_type, mul_node*> mul;
 };
 
 struct para_seidner

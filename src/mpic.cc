@@ -28,7 +28,7 @@ void para_mpic_ini( parameters *ps, long size, long rank )
     para_mpic_set( ps, size, rank );
 
     int file_idx[1] = { (int) ps->mpic->rank };
-    open_para_file_write( para_file::LOG, NULL, ps, 1, file_idx );
+    open_para_file( para_file::LOG, NULL, ps, 1, NULL, file_idx, "w" );
 }
 
 void para_mpic_del( parameters *ps )

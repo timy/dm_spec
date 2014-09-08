@@ -404,7 +404,7 @@ void eom_post_proc( int it, double *y, para_eom *peom )
 
 void eom_output_dm( int it, para_eom* peom )
 {
-    FILE* f_dm = peom->ps->file->one[para_file::DM]->fptr;
+    FILE* f_dm = peom->ps->file->item[para_file::DM]->f[0]->fptr;
     for (int ie = 0; ie < peom->ps->n_eom; ie ++)
         fprintf( f_dm, "%le ", peom->rho[it][ie] );
     fprintf( f_dm, "\n" );
@@ -412,7 +412,7 @@ void eom_output_dm( int it, para_eom* peom )
 
 void eom_output_ef( int it, para_eom* peom )
 {
-    FILE* f_ef = peom->ps->file->one[para_file::EF]->fptr;
+    FILE* f_ef = peom->ps->file->item[para_file::EF]->f[0]->fptr;
     double* ef = new double [peom->ps->n_pulse];
     field_real_components( ef, peom->ps->time[it], peom->ps );
     for (int i_dim = 0; i_dim < peom->ps->n_dim; i_dim ++)

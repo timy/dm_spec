@@ -36,9 +36,9 @@ void para_time_set( parameters* ps )
 #include <cstdio>
 void para_time_write( parameters* ps )
 {
-    open_para_file_write( para_file::TIME, NULL, ps, 0, NULL );
+    open_para_file( para_file::TIME, NULL, ps, 0, NULL, NULL, "w" );
     for (long it = 0; it < ps->nt; it ++)
-        fprintf( ps->file->one[para_file::TIME]->fptr,
+        fprintf( ps->file->item[para_file::TIME]->f[0]->fptr,
                  "%le\n", ps->time[it] / C_fs2au );
     close_para_file( para_file::TIME, ps );
 }

@@ -12,7 +12,7 @@
 
 // pointer to ps is needed here
 #define error( ps, fmt, ... ) {                                 \
-        fprintf( (ps)->file->one[para_file::LOG]->fptr,         \
+        fprintf( (ps)->file->item[para_file::LOG]->f[0]->fptr,  \
                  "ERROR %s (L%d): " fmt "\n",                   \
                  __FILE__, __LINE__, ## __VA_ARGS__ );          \
     }
