@@ -313,7 +313,7 @@ void io_pol_read( para_file::file_type type, complex*** pol, parameters* ps )
             long index = (idx0 + is) * (ps->nt) + it;
             for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                    // TODO: replace this with some function to calculate the index
+                    // TODO: reverse the loop order so that we have better performance
                     idx[0] = i_dpl; idx[1] = i_dim;
                     FILE* fptr = get_fptr_from_idxSyn( type, idx, ps );
                     fscanf( fptr, "%le %le", &re, &im );

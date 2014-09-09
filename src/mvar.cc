@@ -61,68 +61,71 @@ void mvar_output_grid( para_file::file_type type, parameters *ps );
 //     clean_pol_array( 1, ptot, ps );
 // }
 
-// #include <stdexcept>
-// void mvar_calc_grid_seidner( parameters *ps )
-// {
-//     long ns = ps->mpic->njob;
-//     long nt = ps->nt;
+#include <stdexcept>
+void mvar_calc_grid_seidner( parameters *ps )
+{
+    long ns = ps->mpic->njob;
+    long nt = ps->nt;
 
-//     // 2d array: n_phase * (ns * nt) * n_dim
-//     complex ***ppar_2d = prepare_pol_array_seidner( 2, ps );
-//     complex ***ptot_2d = prepare_pol_array_seidner( 2, ps );
+    // 2d array: n_phase * (ns * nt) * n_dim
+    complex ****ppar_2d = prepare_pol_array_seidner( 2, ps );
+    complex ****ptot_2d = prepare_pol_array_seidner( 2, ps );
 
-//     // If there are old results for ensemble for the same parameters,
-//     // one can choose to continue the calculation from old data
-//     if (ps->esmb->with_old == 1) {
-//         try {
-//             io_pol_dir_read( para_file::PPAR_2D, ppar_2d,
-//                              ps->seid->n_phase, NULL, ps );
-//         } catch (std::runtime_error& e) {
-//             error( ps, "%s",  "Cannot open old data file." );
-//             clean_pol_array_seidner( 2, ppar_2d, ps );
-//             clean_pol_array_seidner( 2, ptot_2d, ps );
-//             return;
-//         }
-//     }
+    // If there are old results for ensemble for the same parameters,
+    // one can choose to continue the calculation from old data
+    if (ps->esmb->with_old == 1) {
+        try {
+            io_pol_dir_read( para_file::PPAR_2D, ppar_2d, ps->seid->n_phase, NULL, ps );
+        } catch (std::runtime_error& e) {
+            error( ps, "%s",  "Cannot open old data file." );
+            clean_pol_array_seidner( 2, ppar_2d, ps );
+            clean_pol_array_seidner( 2, ptot_2d, ps );
+            return;
+        }
+    }
 
-//     // 1d array: n_phase * nt * n_dim
-//     complex ***ppar_1d = prepare_pol_array_seidner( 1, ps );
-//     complex ***ptot_1d = prepare_pol_array_seidner( 1, ps );
+    // 1d array: n_phase * nt * n_dim
+    complex ****ppar_1d = prepare_pol_array_seidner( 1, ps );
+    complex ****ptot_1d = prepare_pol_array_seidner( 1, ps );
 
-//     gsl_rng_set( (gsl_rng*) ps->esmb->rng, 4 );
-//     gsl_rng_set( (gsl_rng*) ps->seid->rng, 4 );
+    gsl_rng_set( (gsl_rng*) ps->esmb->rng, 4 );
+    gsl_rng_set( (gsl_rng*) ps->seid->rng, 4 );
 
-//     for (long i_esmb = 0; i_esmb < ps->esmb->n_esmb; i_esmb ++) {
-//         para_esmb_update( i_esmb, ps );
-//         for (long is = 0; is < ns; is ++) {
-//             mvar_update( is, i_esmb, ps );
-//             calc_ptot_seidner( ptot_1d, ps );
-//             calc_ppar_seidner( ppar_1d, ptot_1d, ps );
-//             for (int i_dir = 0; i_dir < ps->seid->n_phase; i_dir ++)
-//                 for (long it = 0; it < nt; it ++)
-//                     for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-//                         long index = is * nt + it;
-//                         ppar_2d[i_dir][index][i_dim] += ppar_1d[i_dir][it][i_dim];
-//                         if (i_esmb == 0)
-//                             ptot_2d[i_dir][index][i_dim] = ptot_1d[i_dir][it][i_dim];
-//                     }
-//         }
-//         if (ps->mpic->rank == 0)
-//             if (i_esmb % 10 == 0)
-//                 fprintf( stdout, "Finished sample number: %ld of %ld\n",
-//                          i_esmb, ps->esmb->n_esmb );
-//     }
+    for (long i_esmb = 0; i_esmb < ps->esmb->n_esmb; i_esmb ++) {
+        para_esmb_update( i_esmb, ps );
+        for (long is = 0; is < ns; is ++) {
+            mvar_update( is, i_esmb, ps );
+            calc_ptot_seidner( ptot_1d, ps );
+            calc_ppar_seidner( ppar_1d, ptot_1d, ps );
+            for (int i_dir = 0; i_dir < ps->seid->n_phase; i_dir ++)
+                for (long it = 0; it < nt; it ++) {
+                    long index = is * nt + it;
+                    for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+                        for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+                            ppar_2d[i_dir][index][i_dpl][i_dim] +=
+                                ppar_1d[i_dir][it][i_dpl][i_dim];
+                            if (i_esmb == 0)
+                                ptot_2d[i_dir][index][i_dpl][i_dim] =
+                                    ptot_1d[i_dir][it][i_dpl][i_dim];
+                        }
+                }
+        }
+        if (ps->mpic->rank == 0)
+            if (i_esmb % 10 == 0)
+                fprintf( stdout, "Finished sample number: %ld of %ld\n",
+                         i_esmb, ps->esmb->n_esmb );
+    }
 
-//     clean_pol_array_seidner( 1, ppar_1d, ps );
-//     clean_pol_array_seidner( 1, ptot_1d, ps );
+    clean_pol_array_seidner( 1, ppar_1d, ps );
+    clean_pol_array_seidner( 1, ptot_1d, ps );
 
-//     mvar_output_grid( para_file::GRID_2D, ps );
-//     io_pol_dir_write( para_file::PPAR_2D, ppar_2d, ps->seid->n_phase, NULL, ps );
-//     io_pol_dir_write( para_file::PTOT_2D, ptot_2d, ps->seid->n_phase, NULL, ps );
+    mvar_output_grid( para_file::GRID_2D, ps );
+    io_pol_dir_write( para_file::PPAR_2D, ppar_2d, ps->seid->n_phase, NULL, ps );
+    io_pol_dir_write( para_file::PTOT_2D, ptot_2d, ps->seid->n_phase, NULL, ps );
 
-//     clean_pol_array_seidner( 2, ppar_2d, ps );
-//     clean_pol_array_seidner( 2, ptot_2d, ps );
-// }
+    clean_pol_array_seidner( 2, ppar_2d, ps );
+    clean_pol_array_seidner( 2, ptot_2d, ps );
+}
 
 // void mvar_calc_grid( parameters *ps )
 // {

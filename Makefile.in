@@ -14,17 +14,16 @@ SRC_CORE	=	\
         output.cc position.cc util.cc file.cc esmb.cc mpic.cc \
         mvar.cc config.cc postproc.cc seidner.cc
 
-# CC		=	/data1/home/tianmin/software/mpich/bin/mpicxx
-# CFLAGS		=	-Wall -O3 -I$(DIR_INC)
-# LFLAGS		=	\
-#         /data1/home/tianmin/software/mpich/lib/libmpich.a  \
-#         /data1/home/tianmin/software/fftw3/lib/libfftw3.a \
-#         /data1/home/tianmin/software/lapack/lib/liblapack.a \
-#         /data1/home/tianmin/software/lapack/lib/librefblas.a \
-#         /usr/lib64/gcc/x86_64-suse-linux/4.3/libgfortran.a \
-#         /data1/home/tianmin/software/gsl/lib/libgsl.a \
-#         -lblas /data1/home/tianmin/software/cblas/lib/cblas_LINUX.a \
-#         /data1/home/tianmin/software/libconfig/lib/libconfig.a
+CC		=	/data1/home/tianmin/software/mpich/bin/mpicxx
+CFLAGS		=	-Wall -O3 -I$(DIR_INC)
+LFLAGS		=	\
+        /data1/home/tianmin/software/mpich/lib/libmpich.a  \
+        /data1/home/tianmin/software/lapack/lib/liblapack.a \
+        /data1/home/tianmin/software/lapack/lib/librefblas.a \
+        /usr/lib64/gcc/x86_64-suse-linux/4.3/libgfortran.a \
+        /data1/home/tianmin/software/gsl/lib/libgsl.a \
+        -lblas /data1/home/tianmin/software/cblas/lib/cblas_LINUX.a \
+        /data1/home/tianmin/software/libconfig/lib/libconfig.a
 
 # # MPI for lemaitre2
 # CC	=	mpicxx
@@ -37,9 +36,9 @@ SRC_CORE	=	\
 # LFLAGS	=	-L/usr/lib64/atlas -l:libcblas.so.3 -l:liblapack.so.3 \
 #               -lconfig -lgsl
 
-# For my laptop
-CC		=	g++
-CFLAGS	=	-Wall -g -I$(DIR_INC)
-LFLAGS	=	-llapack -lm -lgsl -lconfig
+# # For my laptop
+# CC		=	g++
+# CFLAGS	=	-Wall -g -I$(DIR_INC)
+# LFLAGS	=	-llapack -lm -lgsl -lconfig
 
 RM		=	rm -f

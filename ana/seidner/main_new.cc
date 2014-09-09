@@ -25,7 +25,7 @@ void collect_mpi_pol( char* cfg_file, int n_node )
 {
     parameters ps; ps.f_eom = NULL;
     para_ini( &ps, cfg_file );
-    complex*** ppar_2d = prepare_pol_array_seidner( 2, &ps );
+    complex**** ppar_2d = prepare_pol_array_seidner( 2, &ps );
     for (int rank = 0; rank < n_node; rank ++) {
         fprintf( stdout, "node %d: processing...\n", rank );
         parameters ps1; ps1.f_eom = NULL;
