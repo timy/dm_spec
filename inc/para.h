@@ -228,6 +228,6 @@ struct parameters
 
 void para_ini( struct parameters *ps, const char* file_name,
                long size=1, long rank=0 );
-void para_del( struct parameters *para );
+void para_del( struct parameters *ps );
 
 #endif

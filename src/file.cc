@@ -203,7 +203,7 @@ void genFileNameSyn( para_file::file_item* item )
     delete[] idx;
 }
 
-void genFileNameAsy( para_file::file_item* item, char* prefix,
+void genFileNameAsy( para_file::file_item* item, const char* prefix,
                      int iPtr, int nIdx, char** lb, int* idx, char* fileName )
 {
     if (prefix == NULL) {
@@ -221,7 +221,7 @@ void genFileNameAsy( para_file::file_item* item, char* prefix,
     strcat( fileName, ".dat" );
 }
 
-void open_para_file( para_file::file_type type, char* prefix, parameters* ps,
+void open_para_file( para_file::file_type type, const char* prefix, parameters* ps,
                      int nIdx, char** lb, int *idx, const char* rw )
 {
     char fileName[MAX_LENGTH_FILE_NAME];

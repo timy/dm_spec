@@ -1,7 +1,7 @@
 #include "timestep.h"
 #include "para.h"
 #include <cstdlib>
-
+#include <cstdio>
 void para_time_config( struct config_t* cfg, struct parameters* ps );
 void para_time_set( struct parameters* ps );
 
@@ -33,7 +33,6 @@ void para_time_set( parameters* ps )
 }
 
 #include "file.h"
-#include <cstdio>
 void para_time_write( parameters* ps )
 {
     open_para_file( para_file::TIME, NULL, ps, 0, NULL, NULL, "w" );

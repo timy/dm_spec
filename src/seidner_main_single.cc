@@ -7,9 +7,9 @@
 #include "polar.h"
 #include "output.h"
 #include "util.h"
-#include "spec.h"
 #include "file.h"
 #include "eom.h"
+#include "postproc.h"
 #include <complex>
 #include <cstdio>
 
@@ -68,6 +68,16 @@ int main( int argc, char* argv[] )
 
     io_pol_dir_write( para_file::PPAR_1D, ppar_1d, ps.seid->n_phase, NULL, &ps );
     io_pol_dir_write( para_file::PTOT_1D, ptot_1d, ps.seid->n_phase, NULL, &ps );
+
+    // post-process
+    parameters psp; psp.f_eom = NULL;
+    para_ini( &psp, "cfg/parameters_postproc.cfg" );
+    complex ****ppar_1d_post = prepare_pol_array_seidner( 1, &psp );
+    io_pol_dir_read( para_file::PPAR_1D, ppar_1d, ps.seid->n_phase, NULL, &ps );
+    postproc_pol_dir_combine_dipole( ppar_1d, ppar_1d_post, ps.seid->n_phase, &ps );
+    io_pol_dir_write( para_file::PPAR_1D, ppar_1d_post, ps.seid->n_phase, NULL, &psp );
+    clean_pol_array_seidner( 1, ppar_1d_post, &psp );
+    para_del( &psp );
 
     // clean
     clean_pol_array_seidner( 1, ppar_1d, &ps );

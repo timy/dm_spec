@@ -22,9 +22,9 @@ void output_rM_seidner( FILE* file, struct parameters *ps );
 ////////////////////////////////////////
 // input and output grid data
 void io_grid_write( para_file::file_type type, double *s,
-                    char* prefix, struct parameters *ps );
+                    const char* prefix, struct parameters *ps );
 void io_grid_read( para_file::file_type type, double *s,
-                   char* prefix, struct parameters *ps );
+                   const char* prefix, struct parameters *ps );
 
 ////////////////////////////////////////
 // input and output polar data
@@ -71,8 +71,8 @@ void io_pol_read( para_file::file_type type, std::complex<double>*** pol,
                   struct parameters* ps );
 
 void io_pol_dir_write( para_file::file_type type, std::complex<double>**** pol_2d,
-                       int n_dir, char* prefix, struct parameters *ps );
+                       int n_dir, const char* prefix, struct parameters *ps );
 void io_pol_dir_read( para_file::file_type type, std::complex<double>**** pol_2d,
-                      int n_dir, char* prefix, struct parameters *ps );
+                      int n_dir, const char* prefix, struct parameters *ps );
 
 #endif // OUTPUT_H_

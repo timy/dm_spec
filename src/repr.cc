@@ -22,7 +22,7 @@ void repr_set_exciton_dimer( parameters *ps, para_repr_dimer_local *pdl )
     ps->energy[0] = 0.0;
     ps->energy[1] = 0.5 * ( E_sum - sqrt( E_dif_2 + 4.0 * J2 ) );
     ps->energy[2] = 0.5 * ( E_sum + sqrt( E_dif_2 + 4.0 * J2 ) );
-    ps->energy[3] = E_sum;
+    ps->energy[3] = E_sum; // here one can add some anharmonicity
 
     // dipole: defined in the mol. frame
     assert( ps->n_dpl == 4 );
@@ -71,7 +71,9 @@ void para_repr_ini( config_t* cfg, parameters* ps )
             idx = i_type;
         }
 
-    if (count == 1) {
+    if (count == 0) {
+        // nothing defined here, so it is the post-process
+    } else if (count == 1) { // normal calculation
         if (strcmp( type[idx], "dimer" ) == 0) {
             para_repr_dimer_local pdl;
             para_repr_dimer_config( cfg, &pdl );
@@ -82,9 +84,9 @@ void para_repr_ini( config_t* cfg, parameters* ps )
             para_repr_generic_config( cfg, &pg );
             repr_set_generic( ps, &pg );
         }
-    }
-    else
+    } else {
         error( ps, "%d", count );
+    }
 }
 
 void para_repr_del( parameters *para )

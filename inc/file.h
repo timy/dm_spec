@@ -8,7 +8,7 @@ void set_para_file( para_file::file_type type, const char* name,
                     int nVarSyn, int* szVarSyn, char** lbVarSyn,
                     struct parameters *ps );
 
-void open_para_file( para_file::file_type type, char *prefix, parameters* ps,
+void open_para_file( para_file::file_type type, const char *prefix, parameters* ps,
                      int nIdx, char** lb, int *idx, const char* rw );
 void close_para_file( para_file::file_type type, parameters* ps );
 

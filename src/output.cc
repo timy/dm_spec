@@ -246,7 +246,7 @@ void io_rl_read( parameters* ps ) {
 ////////////////////////////////////////////////////////////
 
 void io_grid_write( para_file::file_type type, double *s,
-                    char* prefix, parameters *ps )
+                    const char* prefix, parameters *ps )
 {
     int file_idx[1] = { (int) ps->mpic->rank };
     open_para_file( type, prefix, ps, 1, NULL, file_idx, "w" );
@@ -256,7 +256,7 @@ void io_grid_write( para_file::file_type type, double *s,
 }
 
 void io_grid_read( para_file::file_type type, double *s,
-                   char* prefix, parameters *ps )
+                   const char* prefix, parameters *ps )
 {
     int file_idx[1] = { (int) ps->mpic->rank };
     open_para_file( type, prefix, ps, 1, NULL, file_idx, "r" );
@@ -313,7 +313,7 @@ void io_pol_read( para_file::file_type type, complex*** pol, parameters* ps )
             long index = (idx0 + is) * (ps->nt) + it;
             for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                    // NOTE: replace this with some function to calculate the index
+                    // TODO: replace this with some function to calculate the index
                     idx[0] = i_dpl; idx[1] = i_dim;
                     FILE* fptr = get_fptr_from_idxSyn( type, idx, ps );
                     fscanf( fptr, "%le %le", &re, &im );
@@ -329,7 +329,7 @@ void io_pol_read( para_file::file_type type, complex*** pol, parameters* ps )
 // here, pol should be a global array, while ps is for the node
 // ----------------------------------------
 void io_pol_dir_write( para_file::file_type type, complex**** pol,
-                       int n_dir, char* prefix, parameters *ps )
+                       int n_dir, const char* prefix, parameters *ps )
 {
     // n_dir = ps->seid->n_phase for seidner
     for (int i_dir = 0; i_dir < n_dir; i_dir ++) {
@@ -340,7 +340,7 @@ void io_pol_dir_write( para_file::file_type type, complex**** pol,
     }
 }
 void io_pol_dir_read( para_file::file_type type, complex**** pol,
-                      int n_dir, char* prefix, parameters *ps )
+                      int n_dir, const char* prefix, parameters *ps )
 {
     for (int i_dir = 0; i_dir < n_dir; i_dir ++) {
         int file_idx[2] = { i_dir, (int) ps->mpic->rank };
