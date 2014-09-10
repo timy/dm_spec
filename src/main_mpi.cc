@@ -24,8 +24,9 @@ int main( int argc, char* argv[] )
 
     // actual calculation
     // mvar_calc_esmb( &ps );
-    mvar_calc_grid_seidner( &ps );
-    // mvar_calc_grid( &ps );
+    // TODO: automatically switch between 2 methods
+    // mvar_calc_grid_seidner( &ps );
+    mvar_calc_grid( &ps );
 
     // clean parameters
     para_del( &ps );

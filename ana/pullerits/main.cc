@@ -82,27 +82,29 @@ struct st_par {
     complex val;
 };
 
-void loopAssign_1( complex** pol_0,
+void loopAssign_1( complex*** pol_0,
                    void (*func)( complex&, st_par* ),
                    st_par* par, parameters* ps ) {
     for (long is = 0; is < ps->mpic->njob; is ++)
         for (long it = 0; it < ps->nt; it ++) {
             long index = (ps->mpic->idx0 + is) * (ps->nt) + it;
-            for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                func( pol_0[index][i_dim], par );
-            }
+            for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
+                for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+                    func( pol_0[index][i_dpl][i_dim], par );
+                }
         }
 }
 
-void loopAssign_2( complex** pol_0, complex** pol_1,
+void loopAssign_2( complex*** pol_0, complex*** pol_1,
                    void (*func)( complex&, complex&, st_par* ),
                    st_par* par, parameters* ps ) {
     for (long is = 0; is < ps->mpic->njob; is ++)
         for (long it = 0; it < ps->nt; it ++) {
             long index = (ps->mpic->idx0 + is) * (ps->nt) + it;
-            for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                func( pol_0[index][i_dim], pol_1[index][i_dim], par );
-            }
+            for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
+                for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+                    func( pol_0[index][i_dpl][i_dim], pol_1[index][i_dpl][i_dim], par );
+                }
         }
 }
 
@@ -117,7 +119,7 @@ inline void substract_ptot0_from_ptot( complex& a, complex& b, st_par* par ) {
 inline void normalize( complex& a, st_par* par ) {
     a /= par->val; }
 
-void pullerits_order_0( complex*** ptot, complex**** ppar, parameters* ps ) {
+void pullerits_order_0( complex**** ptot, complex***** ppar, parameters* ps ) {
     st_par par;
     // loop over all direction dir_0
     for (int i_dir = 0; i_dir < N_DIR_0; i_dir ++) {
@@ -127,7 +129,7 @@ void pullerits_order_0( complex*** ptot, complex**** ppar, parameters* ps ) {
     }
 }
 
-void pullerits_order_1( complex*** ptot, complex**** ppar, parameters* ps ) {
+void pullerits_order_1( complex**** ptot, complex***** ppar, parameters* ps ) {
     st_par par;
     // reset ptot[1] to zeros
     loopAssign_1( ptot[1], reset_ptot_0, NULL, ps );
@@ -148,8 +150,8 @@ void pullerits_order_1( complex*** ptot, complex**** ppar, parameters* ps ) {
     }
 }
 
-void ppar_extract_pullerits_process( int i_order, complex*** ptot,
-                                     complex**** ppar, parameters* ps )
+void ppar_extract_pullerits_process( int i_order, complex**** ptot,
+                                     complex***** ppar, parameters* ps )
 {
     if (i_order == 0) {
         pullerits_order_0( ptot, ppar, ps );
@@ -158,13 +160,13 @@ void ppar_extract_pullerits_process( int i_order, complex*** ptot,
     }
 }
 
-void ppar_extract_pullerits_main_frame( int i_order, complex**** ppar, char* cfg_file ) {
+void ppar_extract_pullerits_main_frame( int i_order, complex***** ppar, char* cfg_file ) {
     // prepare parameters
     parameters ps; ps.f_eom = NULL;
     para_ini( &ps, cfg_file );
     // create temporary array ptot. ptot[0] is used for file data
     // ptot[1] is used for work array, if necessary
-    complex ***ptot = new complex** [2];
+    complex ****ptot = new complex*** [2];
     for (int i = 0; i < 2; i ++)
         ptot[i] = prepare_pol_array( 2, &ps );
     // loop over all samples from files of each MPI node
@@ -174,15 +176,15 @@ void ppar_extract_pullerits_main_frame( int i_order, complex**** ppar, char* cfg
         para_ini( &ps1, cfg_file, n_node, rank );
         // open files for ptot and rl
         int file_idx[1] = { (int)ps1.mpic->rank };
-        open_para_file_read( para_file::RL, "../../", &ps1, 1, file_idx );
-        open_para_file_read( para_file::PTOT_2D, "../../", &ps1, 1, file_idx );
+        open_para_file( para_file::RL, "../../", &ps1, 1, NULL, file_idx, "r" );
+        open_para_file( para_file::PTOT_2D, "../../", &ps1, 1, NULL, file_idx, "r" );
         // loop over ensemble, process data block from a single file
         for (int i_esmb = 0; i_esmb < ps1.esmb->n_esmb; i_esmb ++) {
             if (i_esmb % 20000 == 0)
                 fprintf( stdout, "order %1d: rank %2d of %2d, esmb %d of %ld\n",
                          i_order, rank, n_node, i_esmb, ps1.esmb->n_esmb );
             io_rl_read( &ps1 );
-            io_pol_read( ps1.file->mul[para_file::PTOT_2D]->fptr, ptot[0], &ps1 );
+            io_pol_read( para_file::PTOT_2D, ptot[0], &ps1 );
             ppar_extract_pullerits_process( i_order, ptot, ppar, &ps1 );
         }
         // close files for ptot and rl
@@ -207,10 +209,10 @@ void ppar_extract_pullerits( char* cfg_file ) {
     // prepare parameters
     parameters ps; ps.f_eom = NULL;
     para_ini( &ps, cfg_file );
-    // prepare arrays ppar: 2 x n_dir x (nt x ns) x n_dim
-    complex**** ppar = new complex*** [n_order];
+    // prepare arrays ppar: 2 x n_dir x (nt x ns) x n_dpl x n_dim
+    complex***** ppar = new complex**** [n_order];
     for (int i_order = 0; i_order < n_order; i_order ++) {
-        ppar[i_order] = new complex** [n_dir[i_order]];
+        ppar[i_order] = new complex*** [n_dir[i_order]];
         for (int i_dir = 0; i_dir < n_dir[i_order]; i_dir ++)
             ppar[i_order][i_dir] = prepare_pol_array( 2, &ps );
     }

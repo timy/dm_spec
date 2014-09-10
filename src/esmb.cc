@@ -70,14 +70,15 @@ void para_esmb_update( long i_esmb, parameters *ps )
     set_para_efield_lab( ps );
     set_para_efield_mol( ps );
 
+    // TODO: switch automatically between 2 methods
     // positions for pullerits', comment for seidner's
-    // for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-    //     doubel r = gsl_rng_uniform( (gsl_rng*) ps->esmb->rng );
-    //     ps->pos[i_dim] = (r - 0.5) * 2e-4;
-    // }
+    for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
+        double r = gsl_rng_uniform( (gsl_rng*) ps->esmb->rng );
+        ps->pos[i_dim] = (r - 0.5) * 2e-4;
+    }
 
     // positions for seidner's, comment for pullerits'
-    set_para_seidner( ps );
+    // set_para_seidner( ps );
 
     // set_para_mvar( ps );
     // para_mpic_set( ps, size, rank );

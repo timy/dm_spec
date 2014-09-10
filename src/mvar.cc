@@ -136,17 +136,17 @@ void mvar_calc_grid( parameters *ps )
     mvar_output_grid( para_file::GRID_2D, ps );
 
     int file_idx[1] = { (int)ps->mpic->rank };
-    open_para_file_write( para_file::RL, NULL, ps, 1, file_idx );
-    open_para_file_write( para_file::PTOT_2D, NULL, ps, 1, file_idx );
+    open_para_file( para_file::RL, NULL, ps, 1, NULL, file_idx, "w" );
+    open_para_file( para_file::PTOT_2D, NULL, ps, 1, NULL, file_idx, "w" );
     // ptot: (ns * nt) * n_dim     ptot_1d: nt * n_dim;
-    complex** ptot = prepare_pol_array( 2, ps );
+    complex*** ptot = prepare_pol_array( 2, ps );
     for (long i_esmb = 0; i_esmb < ps->esmb->n_esmb; i_esmb ++) {
         para_esmb_update( i_esmb, ps );
         for (long is = 0; is < ns; is ++) {
             mvar_update( is, i_esmb, ps );
             calc_ptot( ptot, ps, is * nt ); // note ig = is * nt for 2D
         }
-        io_pol_write( ps->file->mul[para_file::PTOT_2D]->fptr, ptot, ps );
+        io_pol_write( para_file::PTOT_2D, ptot, ps );
         io_rl_write( ps );
         // display progress
         if (ps->mpic->rank == 0)
