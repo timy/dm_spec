@@ -6,6 +6,7 @@
 *.exe
 *.o
 *.so
+*.pyc
 test
 
 # Packages #
@@ -25,3 +26,6 @@ test
 ######################
 *.log
 *.dat
+*.out
+res/
+fig/
