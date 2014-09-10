@@ -23,8 +23,14 @@ int main( int argc, char* argv[] )
     parameters ps; ps.f_eom = equation_of_motion_full;
     para_ini( &ps, "cfg/parameters.cfg" );
 
+    if (ps.pols->method_ppar != para_pols::SEIDNER) {
+        fprintf( stderr, "You need to set pols.ppar_calc_method"
+                 " to be 'seidner' for this program.\n" );
+        para_del( &ps ); exit( -1 );
+    }
+
     if (ps.mvar->ny > 1) {
-        fprintf( stdout, "You need to set ny = 1 for this program.\n" );
+        fprintf( stderr, "You need to set ny = 1 for this program.\n" );
         para_del( &ps );
         exit( -1 );
     }
@@ -68,16 +74,6 @@ int main( int argc, char* argv[] )
 
     io_pol_dir_write( para_file::PPAR_1D, ppar_1d, ps.seid->n_phase, NULL, &ps );
     io_pol_dir_write( para_file::PTOT_1D, ptot_1d, ps.seid->n_phase, NULL, &ps );
-
-    // post-process
-    parameters psp; psp.f_eom = NULL;
-    para_ini( &psp, "cfg/parameters_postproc.cfg" );
-    complex ****ppar_1d_post = prepare_pol_array_seidner( 1, &psp );
-    io_pol_dir_read( para_file::PPAR_1D, ppar_1d, ps.seid->n_phase, NULL, &ps );
-    postproc_pol_dir_combine_dipole( ppar_1d, ppar_1d_post, ps.seid->n_phase, &ps );
-    io_pol_dir_write( para_file::PPAR_1D, ppar_1d_post, ps.seid->n_phase, NULL, &psp );
-    clean_pol_array_seidner( 1, ppar_1d_post, &psp );
-    para_del( &psp );
 
     // clean
     clean_pol_array_seidner( 1, ppar_1d, &ps );

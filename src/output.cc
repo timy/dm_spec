@@ -220,6 +220,7 @@ void output_info( para_file::file_type type, parameters* ps )
 
     display_section( file, "pols" );
     print_info( file, ps->pols->n_dpl );
+    print_info( file, ps->pols->method_ppar );
 
     close_para_file( type, ps );
 }

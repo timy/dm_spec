@@ -1,6 +1,6 @@
 #include "para.h"
 #include "pols.h"
-
+#include "debug.h"
 void para_pols_config( struct config_t* cfg, struct parameters *ps );
 
 void para_pols_ini( struct config_t* cfg, struct parameters *ps )
@@ -20,6 +20,7 @@ void set_para_pols( struct parameters *ps )
 }
 
 #include <libconfig.h>
+#include <cstring>
 void para_pols_config( struct config_t* cfg, struct parameters *ps )
 {
     ps->pols->bPolForEachDpl = false;
@@ -28,5 +29,16 @@ void para_pols_config( struct config_t* cfg, struct parameters *ps )
         ps->pols->n_dpl = ps->n_dpl;
     } else {
         ps->pols->n_dpl = 1;
+    }
+
+    const char* name = NULL;
+    config_lookup_string( cfg, "pols.ppar_calc_method", &name );
+    if (strcmp(name, "pullerits") == 0) {
+        ps->pols->method_ppar = para_pols::PULLERITS;
+    } else if (strcmp(name, "seidner") == 0) {
+        ps->pols->method_ppar = para_pols::SEIDNER;
+    } else {
+        fprintf( stderr, "method_ppar '%s' unknown. Check "
+                 "section 'pols' in your configure file\n", name );
     }
 }

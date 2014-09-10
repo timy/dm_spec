@@ -185,6 +185,11 @@ struct para_pols
     int bPolForEachDpl = false;
     int n_dpl;
     int n_dim;
+
+    enum {
+        SEIDNER,
+        PULLERITS
+    } method_ppar;
 };
 
 struct parameters

@@ -24,9 +24,14 @@ int main( int argc, char* argv[] )
 
     // actual calculation
     // mvar_calc_esmb( &ps );
-    // TODO: automatically switch between 2 methods
-    // mvar_calc_grid_seidner( &ps );
-    mvar_calc_grid( &ps );
+    switch (ps.pols->method_ppar) {
+    case para_pols::SEIDNER:
+        mvar_calc_grid_seidner( &ps );
+        break;
+    case para_pols::PULLERITS:
+        mvar_calc_grid( &ps );
+        break;
+    }
 
     // clean parameters
     para_del( &ps );

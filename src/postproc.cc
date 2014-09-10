@@ -26,29 +26,3 @@ void postproc_collect_mpi_grid( char* cfg_file, int n_node, const char* prefix )
     delete[] grid;
     para_del( &ps );
 }
-
-void postproc_pol_combine_dipole( complex*** pol_from, complex*** pol_to,
-                                  parameters* ps )
-{
-    // pol_from: nx * n_dpl * n_dim, ps corresponds to this one
-    // pol_to:   nx *     1 * n_dim
-    long ns = ps->mpic->njob;
-    for (int is = 0; is < ns; is ++)
-        for (int it = 0; it < ps->nt; it ++) {
-            long index = is * (ps->nt) + it;
-            for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {
-                for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-                    pol_to[index][0][i_dim] += pol_from[index][i_dpl][i_dim];
-                }
-            }
-        }
-}
-
-void postproc_pol_dir_combine_dipole( complex**** pol_from, complex**** pol_to,
-                                      int n_dir, parameters* ps )
-{
-    // pol_from: n_dir * nx * n_dpl * n_dim, ps corresponses to this one
-    // pol_to:   n_dir * nx *     1 * n_dim
-    for (int i_dir = 0; i_dir < n_dir; i_dir ++)
-        postproc_pol_combine_dipole( pol_from[i_dir], pol_to[i_dir], ps );
-}
