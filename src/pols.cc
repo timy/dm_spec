@@ -23,14 +23,6 @@ void set_para_pols( struct parameters *ps )
 #include <cstring>
 void para_pols_config( struct config_t* cfg, struct parameters *ps )
 {
-    ps->pols->bPolForEachDpl = false;
-    config_lookup_bool( cfg, "pols.b_pol_for_each_dpl", &(ps->pols->bPolForEachDpl) );
-    if (ps->pols->bPolForEachDpl == true) {
-        ps->pols->n_dpl = ps->n_dpl;
-    } else {
-        ps->pols->n_dpl = 1;
-    }
-
     const char* name = NULL;
     config_lookup_string( cfg, "pols.ppar_calc_method", &name );
     if (strcmp(name, "pullerits") == 0) {
@@ -40,5 +32,13 @@ void para_pols_config( struct config_t* cfg, struct parameters *ps )
     } else {
         fprintf( stderr, "method_ppar '%s' unknown. Check "
                  "section 'pols' in your configure file\n", name );
+    }
+
+    ps->pols->bPolForEachDpl = false;
+    config_lookup_bool( cfg, "pols.b_pol_for_each_dpl", &(ps->pols->bPolForEachDpl) );
+    if (ps->pols->bPolForEachDpl == true) {
+        ps->pols->n_dpl = ps->n_dpl;
+    } else {
+        ps->pols->n_dpl = 1;
     }
 }
