@@ -127,37 +127,37 @@ void mvar_calc_grid_seidner( parameters *ps )
     clean_pol_array_seidner( 2, ptot_2d, ps );
 }
 
-// void mvar_calc_grid( parameters *ps )
-// {
-//     long ns = ps->mpic->njob;
-//     long nt = ps->nt;
+void mvar_calc_grid( parameters *ps )
+{
+    long ns = ps->mpic->njob;
+    long nt = ps->nt;
 
-//     gsl_rng_set( (gsl_rng*) ps->esmb->rng, 1 );
-//     mvar_output_grid( para_file::GRID_2D, ps );
+    gsl_rng_set( (gsl_rng*) ps->esmb->rng, 1 );
+    mvar_output_grid( para_file::GRID_2D, ps );
 
-//     int file_idx[1] = { (int)ps->mpic->rank };
-//     open_para_file_write( para_file::RL, NULL, ps, 1, file_idx );
-//     open_para_file_write( para_file::PTOT_2D, NULL, ps, 1, file_idx );
-//     // ptot: (ns * nt) * n_dim     ptot_1d: nt * n_dim;
-//     complex** ptot = prepare_pol_array( 2, ps );
-//     for (long i_esmb = 0; i_esmb < ps->esmb->n_esmb; i_esmb ++) {
-//         para_esmb_update( i_esmb, ps );
-//         for (long is = 0; is < ns; is ++) {
-//             mvar_update( is, i_esmb, ps );
-//             calc_ptot( ptot, ps, is * nt ); // note ig = is * nt for 2D
-//         }
-//         io_pol_write( ps->file->mul[para_file::PTOT_2D]->fptr, ptot, ps );
-//         io_rl_write( ps );
-//         // display progress
-//         if (ps->mpic->rank == 0)
-//             if (i_esmb % 100 == 0)
-//                 fprintf( stdout, "Finished sample number: %ld of %ld\n",
-//                          i_esmb, ps->esmb->n_esmb );
-//     }
-//     clean_pol_array( 2, ptot, ps );
-//     close_para_file( para_file::RL, ps );
-//     close_para_file( para_file::PTOT_2D, ps );
-// }
+    int file_idx[1] = { (int)ps->mpic->rank };
+    open_para_file_write( para_file::RL, NULL, ps, 1, file_idx );
+    open_para_file_write( para_file::PTOT_2D, NULL, ps, 1, file_idx );
+    // ptot: (ns * nt) * n_dim     ptot_1d: nt * n_dim;
+    complex** ptot = prepare_pol_array( 2, ps );
+    for (long i_esmb = 0; i_esmb < ps->esmb->n_esmb; i_esmb ++) {
+        para_esmb_update( i_esmb, ps );
+        for (long is = 0; is < ns; is ++) {
+            mvar_update( is, i_esmb, ps );
+            calc_ptot( ptot, ps, is * nt ); // note ig = is * nt for 2D
+        }
+        io_pol_write( ps->file->mul[para_file::PTOT_2D]->fptr, ptot, ps );
+        io_rl_write( ps );
+        // display progress
+        if (ps->mpic->rank == 0)
+            if (i_esmb % 100 == 0)
+                fprintf( stdout, "Finished sample number: %ld of %ld\n",
+                         i_esmb, ps->esmb->n_esmb );
+    }
+    clean_pol_array( 2, ptot, ps );
+    close_para_file( para_file::RL, ps );
+    close_para_file( para_file::PTOT_2D, ps );
+}
 
 void para_mvar_config( config_t* cfg, parameters* ps );
 void para_mvar_set( parameters* ps );
