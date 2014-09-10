@@ -36,7 +36,7 @@ void postproc_pol_combine_dipole( complex*** pol_from, complex*** pol_to,
     for (int is = 0; is < ns; is ++)
         for (int it = 0; it < ps->nt; it ++) {
             long index = is * (ps->nt) + it;
-            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++) {
+            for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
                     pol_to[index][0][i_dim] += pol_from[index][i_dpl][i_dim];
                 }

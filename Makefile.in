@@ -12,7 +12,7 @@ SRC_CORE	=	\
         para.cc rotation.cc coord.cc repr.cc bath.cc random.cc \
         field.cc prop.cc eom.cc polar.cc timestep.cc help.cc \
         output.cc position.cc util.cc file.cc esmb.cc mpic.cc \
-        mvar.cc config.cc postproc.cc seidner.cc
+        pols.cc mvar.cc config.cc postproc.cc seidner.cc
 
 CC		=	/data1/home/tianmin/software/mpich/bin/mpicxx
 CFLAGS		=	-Wall -O3 -I$(DIR_INC)

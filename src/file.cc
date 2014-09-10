@@ -69,12 +69,12 @@ void para_file_config( struct config_t* cfg, struct parameters* ps )
     set_para_file( para_file::GRID_1D, name, 0, NULL, NULL, ps );
 
     config_lookup_string( cfg, "file.ppar_1d", &name );
-    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[0] = ps->pols->n_dpl; strcpy( lbVarSyn[0], "dpl" );
     szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
     set_para_file( para_file::PPAR_1D, name, 2, szVarSyn, lbVarSyn, ps );
 
     config_lookup_string( cfg, "file.ptot_1d", &name );
-    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[0] = ps->pols->n_dpl; strcpy( lbVarSyn[0], "dpl" );
     szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
     set_para_file( para_file::PTOT_1D, name, 2, szVarSyn, lbVarSyn, ps );
 
@@ -82,12 +82,12 @@ void para_file_config( struct config_t* cfg, struct parameters* ps )
     set_para_file( para_file::GRID_2D, name, 0, NULL, NULL, ps );
 
     config_lookup_string( cfg, "file.ppar_2d", &name );
-    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[0] = ps->pols->n_dpl; strcpy( lbVarSyn[0], "dpl" );
     szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
     set_para_file( para_file::PPAR_2D, name, 2, szVarSyn, lbVarSyn, ps );
 
     config_lookup_string( cfg, "file.ptot_2d", &name );
-    szVarSyn[0] = ps->n_dpl; strcpy( lbVarSyn[0], "dpl" );
+    szVarSyn[0] = ps->pols->n_dpl; strcpy( lbVarSyn[0], "dpl" );
     szVarSyn[1] = ps->n_dim; strcpy( lbVarSyn[1], "coo" );
     set_para_file( para_file::PTOT_2D, name, 2, szVarSyn, lbVarSyn, ps );
 

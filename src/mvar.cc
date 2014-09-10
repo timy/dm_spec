@@ -100,7 +100,7 @@ void mvar_calc_grid_seidner( parameters *ps )
             for (int i_dir = 0; i_dir < ps->seid->n_phase; i_dir ++)
                 for (long it = 0; it < nt; it ++) {
                     long index = is * nt + it;
-                    for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+                    for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
                         for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
                             ppar_2d[i_dir][index][i_dpl][i_dim] +=
                                 ppar_1d[i_dir][it][i_dpl][i_dim];

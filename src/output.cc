@@ -218,6 +218,9 @@ void output_info( para_file::file_type type, parameters* ps )
     display_section( file, "help" );
     print_info( file, ps->help->w_max );
 
+    display_section( file, "pols" );
+    print_info( file, ps->pols->n_dpl );
+
     close_para_file( type, ps );
 }
 
@@ -285,7 +288,7 @@ void io_pol_write( para_file::file_type type, complex*** pol, parameters* ps )
     for (int is = 0; is < ns; is ++)
         for (int it = 0; it < ps->nt; it ++) {
             long index = is * (ps->nt) + it;
-            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+            for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
                     // TODO: reverse the loop order so that we have better performance
                     idx[0] = i_dpl; idx[1] = i_dim;
@@ -311,7 +314,7 @@ void io_pol_read( para_file::file_type type, complex*** pol, parameters* ps )
         for (int it = 0; it < ps->nt; it ++) {
             // notice, idx0 is used to locate the start in global array
             long index = (idx0 + is) * (ps->nt) + it;
-            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+            for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
                     // TODO: reverse the loop order so that we have better performance
                     idx[0] = i_dpl; idx[1] = i_dim;

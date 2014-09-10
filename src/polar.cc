@@ -27,8 +27,8 @@ complex*** prepare_pol_array( int dim, parameters *ps )
     try {
         pol = new complex** [n_grid];
         for (long i_grid = 0; i_grid < n_grid; i_grid ++) {
-            pol[i_grid] = new complex* [ps->n_dpl];
-            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+            pol[i_grid] = new complex* [ps->pols->n_dpl];
+            for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
                 pol[i_grid][i_dpl] = new complex [ps->n_dim];
         }
     } catch (std::exception& e) {
@@ -48,7 +48,7 @@ void clean_pol_array( int dim, complex ***pol, parameters *ps )
     //     delete[] pol[i_grid];
     // delete[] pol;
     for (long i_grid = 0; i_grid < n_grid; i_grid ++) {
-        for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++) {
+        for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {
             delete[] pol[i_grid][i_dpl];
         }
         delete[] pol[i_grid];
@@ -85,8 +85,8 @@ void ptot_from_dm( complex ***pol, double **rho, parameters *ps, long ig )
     // pol: nt * n_dpl * n_dim         rho: nt * N_EOM
     // deleted later!
     // complex *pol_M = new complex[ps->n_dim];
-    complex** pol_M = new complex* [ps->n_dpl];
-    for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+    complex** pol_M = new complex* [ps->pols->n_dpl];
+    for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
         pol_M[i_dpl] = new complex [ps->n_dim];
 
     for (long it = 0; it < ps->nt; it ++) {
@@ -94,7 +94,7 @@ void ptot_from_dm( complex ***pol, double **rho, parameters *ps, long ig )
         // ptot_from_dm_7lv( pol_M, rho[it], ps );
         ptot_from_dm_org( pol_M, rho[it], ps );
 
-        for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++) {
+        for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {
             coord_from_mol_to_lab( pol_M[i_dpl], pol[ig+it][i_dpl], ps );
         }
         // for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
@@ -109,7 +109,7 @@ void ptot_from_dm( complex ***pol, double **rho, parameters *ps, long ig )
         //     pol[ig+it][i_dim] = pol_M[i_dim];
     }
 
-    for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+    for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
         delete[] pol_M[i_dpl];
     delete[] pol_M;
 }
@@ -131,10 +131,15 @@ void ptot_from_dm_org( complex** pol_M, double* rho, parameters *ps )
     // complex r12 = complex( rho[12], rho[13] );
     // complex r30 = complex( rho[14], rho[15] );
     for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-        pol_M[0][i_dim] = 2.0 * real( mu_10[i_dim] * r10 );
-        pol_M[1][i_dim] = 2.0 * real( mu_20[i_dim] * r20 );
-        pol_M[2][i_dim] = 2.0 * real( mu_31[i_dim] * r31 );
-        pol_M[3][i_dim] = 2.0 * real( mu_32[i_dim] * r32 );
+        if (ps->pols->bPolForEachDpl == true) {
+            pol_M[0][i_dim] = 2.0 * real( mu_10[i_dim] * r10 );
+            pol_M[1][i_dim] = 2.0 * real( mu_20[i_dim] * r20 );
+            pol_M[2][i_dim] = 2.0 * real( mu_31[i_dim] * r31 );
+            pol_M[3][i_dim] = 2.0 * real( mu_32[i_dim] * r32 );
+        } else {
+            pol_M[0][i_dim] = 2.0 * real( mu_10[i_dim] * r10 + mu_20[i_dim] * r20 +
+                                          mu_31[i_dim] * r31 + mu_32[i_dim] * r32 );
+        }
     }
 }
 

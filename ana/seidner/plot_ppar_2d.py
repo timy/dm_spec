@@ -10,9 +10,11 @@ func = np.abs
 time = np.loadtxt( "res/time.dat" )
 grid = np.loadtxt( "res/grid_2d_0.dat")
 i_dir = 40
+# data = np.loadtxt( "res/ppar_2d_dpl0_coo2_%d_0.dat" % i_dir )
+# for i in range(1, 4):
+#     data += np.loadtxt( "res/ppar_2d_dpl%d_coo2_%d_0.dat" % (i, i_dir) )
+
 data = np.loadtxt( "res/ppar_2d_dpl0_coo2_%d_0.dat" % i_dir )
-for i in range(1, 4):
-    data += np.loadtxt( "res/ppar_2d_dpl%d_coo2_%d_0.dat" % (i, i_dir) )
 
 # import matplotlib.pyplot as plt
 # plt.plot( data[0:500,0] )

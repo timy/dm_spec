@@ -9,6 +9,7 @@
 #include "bath.h"
 #include "field.h"
 #include "seidner.h"
+#include "pols.h"
 #include "file.h"
 #include "help.h"
 #include "output.h"
@@ -35,6 +36,7 @@ void para_ini( parameters *ps, const char* file_name, long size, long rank )
     para_core_ini( &cfg, ps );
     para_pos_ini( &cfg, ps );
     // sub-systems
+    para_pols_ini( &cfg, ps );
     para_file_ini( &cfg, ps );
     para_help_ini( &cfg, ps );
     para_time_ini( &cfg, ps );
@@ -70,6 +72,7 @@ void para_del( parameters *ps )
     para_time_del( ps );
     para_help_del( ps );
     para_file_del( ps );
+    para_pols_del( ps );
     //
     para_pos_del( ps );
     para_core_del( ps );

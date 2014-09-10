@@ -180,6 +180,13 @@ struct para_help
     double w_max;
 };
 
+struct para_pols
+{
+    int bPolForEachDpl = false;
+    int n_dpl;
+    int n_dim;
+};
+
 struct parameters
 {
     int n_dim;
@@ -218,9 +225,9 @@ struct parameters
     struct para_mvar *mvar;
     struct para_mpic *mpic;
     struct para_file *file;
-    struct para_ppar *ppar;
     struct para_seidner *seid;
     struct para_help *help;
+    struct para_pols *pols;
 
     // function pointer to EOM
     int (*f_eom)( double, const double*, double*, void* );
