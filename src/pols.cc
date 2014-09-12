@@ -37,6 +37,10 @@ void para_pols_config( struct config_t* cfg, struct parameters *ps )
     ps->pols->bPolForEachDpl = false;
     config_lookup_bool( cfg, "pols.b_pol_for_each_dpl", &(ps->pols->bPolForEachDpl) );
     if (ps->pols->bPolForEachDpl == true) {
+        if (ps->pols->method_ppar == para_pols::PULLERITS) {
+            print( "%s L%d Warning: for Pullerits' method, "
+                   "better set b_pol_for_each_dpl=false\n" );
+        }
         ps->pols->n_dpl = ps->n_dpl;
     } else {
         ps->pols->n_dpl = 1;
