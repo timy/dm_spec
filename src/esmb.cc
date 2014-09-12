@@ -54,16 +54,16 @@ void para_esmb_update( long i_esmb, parameters *ps )
     para_repr_dimer_local pdl;
     pdl.EA = 16200.0 * C_cm2au; //+ random_normal() * 200.0 * C_cm2au;
     pdl.EB = 15800.0 * C_cm2au; //+ random_normal() * 200.0 * C_cm2au;
-    pdl.J  = 300.0 * C_cm2au;
-    //pdl.J  = 0.0 * C_cm2au;
+    //pdl.J  = 300.0 * C_cm2au;
+    pdl.J  = 0.0 * C_cm2au;
 
     pdl.mu_A[0] = 0.0;
     pdl.mu_A[1] = 0.0;
     pdl.mu_A[2] = 1.0;
     pdl.mu_B[0] = 0.0;
     pdl.mu_B[1] = 0.0;
-    pdl.mu_B[2] = -0.36;
-    //pdl.mu_B[2] = 1.0;
+    //pdl.mu_B[2] = -0.36;
+    pdl.mu_B[2] = 1.0;
 
     repr_set_exciton_dimer( ps, &pdl );
     set_para_bath( ps );

@@ -79,6 +79,7 @@ dat = {
 }
 
 idx = ["Rr3n1", "Rr3n0", "Rr1n2"]
+#idx = ["Rr0n0", "Rr1n1", "Rr2n2", "Rr3n3"]
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
