@@ -34,14 +34,14 @@ def plotAmplitudeMax(maxAmp, idxDir, fileName):
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MaxNLocator
     nDir = len(idxDir)
-    fig = plt.figure()
+    fig = plt.figure(figsize=(26, 10))
     ax = fig.add_subplot( 1, 1, 1 )
     ax.plot(maxAmp, marker='.')
     ax.grid(True)
     ax.xaxis.set_major_locator(MaxNLocator(nbins=nDir-1, integer=True))
     ax.set_xticks(range(nDir))
     ax.set_xticklabels(idxDir, rotation='90')
-    plt.savefig(fileName)
+    plt.savefig(fileName, bbox_inches='tight')
     plt.close(fig)
 
 # def var_direction():
