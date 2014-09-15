@@ -1,5 +1,49 @@
 import numpy as np
 
+def readDirIndex(fileName):
+    import json
+    fileDir = open(fileName)
+    idxDir = json.load(fileDir)['order']
+    fileDir.close()
+    order = ['1', '3', '5']
+    idxStart = [0, 6, 44]
+    return order, idxDir, idxStart
+
+def calcAmplitude(fileNameFunc, nt, nCoo, iDir):
+    s = np.zeros(nt)
+    for iCoo in range(nCoo):
+        data = np.loadtxt( fileNameFunc(iCoo, iDir) )
+        for i in range(2):
+            s += data[:,i]**2
+    return np.sqrt(s)
+# this function is not used, the index of the direction l= [l1, l2, l3]
+def indexOfDir( idxDir, l ):
+    # for iOrder in range(nOrder):
+    for index, item in enumerate(idxDir):
+        if item == l:
+            return index
+
+def calcAmplitudeMax(fileNameFunc, nt, nDir, nCoo=3, idxStart=0):
+    maxAmp = np.zeros(nDir)
+    for iDir in range(nDir):
+        maxAmp[iDir] = np.amax( calcAmplitude(fileNameFunc, nt, nCoo, idxStart+iDir) )
+        print( "%d: %le" % (iDir, maxAmp[iDir]) )
+    return maxAmp
+
+def plotAmplitudeMax(maxAmp, idxDir, fileName):
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+    nDir = len(idxDir)
+    fig = plt.figure()
+    ax = fig.add_subplot( 1, 1, 1 )
+    ax.plot(maxAmp, marker='.')
+    ax.grid(True)
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=nDir-1, integer=True))
+    ax.set_xticks(range(nDir))
+    ax.set_xticklabels(idxDir, rotation='90')
+    plt.savefig(fileName)
+    plt.close(fig)
+
 # def var_direction():
 #     dir1 = [ [ 1, 0, 0], [ 0, 1, 0], [ 0, 0, 1],
 #              [-1, 1, 1], [ 1,-1, 1], [ 1, 1,-1],
