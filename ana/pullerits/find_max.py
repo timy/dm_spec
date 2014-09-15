@@ -1,11 +1,14 @@
 import json
-fileDir = open('index.json')
-idxDir = json.load(fileDir)
+fileDir = open('../../cfg/index.json')
+idxDir = json.load(fileDir)['order']
 fileDir.close()
+order = ['1', '3', '5'];
+
+idxStart = [0, 6, 44]
+n_order, n_coo, nt = 2, 3, 960
+n_dir = [len(idxDir[order[i]]) for i in range(n_order)]
 
 import numpy as np
-n_order, n_coo, nt = 2, 3, 960
-n_dir = [len(idxDir[i]) for i in range(n_order)]
 # calculate the abs value of emitting electric field (including all directions)
 def calcAmplitude(i_order, i_dir):
     s = np.zeros(nt)
@@ -17,7 +20,7 @@ def calcAmplitude(i_order, i_dir):
 # this function is not used, the index of the direction l= [l1, l2, l3]
 def indexOfDir( idxDir, l ):
     for i_order in range(n_order):
-        for index, item in enumerate(idxDir[i_order]):
+         for index, item in enumerate(idxDir[order[i_order]]):
             if item == l:
                 return i_order, index
 # calculate the largest value of the ith-order / jth-direction
@@ -33,6 +36,7 @@ fig, ax = plt.subplots(2)
 for i_order in range(n_order):
     ax[i_order].plot(maxAmp[i_order], marker='.')
     ax[i_order].grid(True)
-    ax[i_order].xaxis.set_major_locator(MaxNLocator(len(idxDir[i_order])+1))
-    ax[i_order].set_xticklabels(idxDir[i_order], rotation='90')
+    ax[i_order].xaxis.set_major_locator(MaxNLocator(n_dir[i_order]-1))
+    ax[i_order].set_xticks(range(n_dir[i_order]))
+    ax[i_order].set_xticklabels(idxDir[order[i_order]], rotation='90')
 plt.show()

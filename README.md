@@ -14,7 +14,7 @@ Before starting up, you need to set `Makefile.in` to make sure it is compilable.
 The options to check are `CC`, `CFLAGS` and `LFLAGS`.
 The program requires following dependencies,
 * BLAS and LAPACK - Matrix inverse is used for Seidner's method
-* GSL - Too lasy to write my own ODE solver
+* GSL - Too lazy to write my own ODE solver
 * MPICH2 - neither am I that patient to wait for results...
 * libconfig - used to read `parameters.cfg` with nice format.
   But probably I will try JSON soon.

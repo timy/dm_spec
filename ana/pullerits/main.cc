@@ -9,7 +9,7 @@
 int flag = 0; // for debug
 
 #define N_DIR_0  6 //45
-#define N_DIR_1  39
+#define N_DIR_1  38
 
 const int n_node = 20;
 const int n_order = 2;
@@ -19,46 +19,66 @@ int*** dir_index = NULL;
 #define complex std::complex<double>
 #define EYE complex(0.0, 1.0)
 
-int dir_index_0[N_DIR_0][3] = {
-    { 1,  0,  0},  { 0,  1,  0},  { 0,  0,  1},
-    {-1,  0,  0},  { 0, -1,  0},  { 0,  0, -1}
-};
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
+#include <cassert>
+#include <exception>
 
-int dir_index_1[N_DIR_1][3] = {
-    {-1,  1,  1},  { 1, -1,  1},  { 1,  1, -1}, // 0,  1,   2
-    {-2,  1,  0},  { 1, -2,  0},  {-2,  0,  1}, // 3,  4,   5
-    { 0, -2,  1},  { 1,  0, -2},  { 0,  1, -2}, // 6,  7,   8
+void readDirIndex(int i_order, int** dir_index)
+{
+    using namespace boost::property_tree;
+    try {
+        ptree pt;
+        read_json("../../cfg/index.json", pt);
 
-    { 1, -1, -1},  {-1,  1, -1},  {-1, -1,  1}, // 9,  10, 11
-    { 2, -1,  0},  {-1,  2,  0},  { 2,  0, -1}, // 12, 13, 14
-    { 0,  2, -1},  {-1,  0,  2},  { 0, -1,  2}, // 15, 16, 17
-
-    { 3,  0,  0},  { 0,  3,  0},  { 0,  0,  3}, // 18, 19, 20
-    { 2,  1,  0},  { 2,  0,  1},  { 1,  2,  0}, // 21, 22, 23
-    { 0,  2,  1},  { 1,  0,  2},  { 0,  1,  2}, // 24, 25, 26
-    { 1,  1,  1},                               // 27
-
-    {-3,  0,  0},  { 0, -3,  0},  { 0,  0, -3}, // 28, 29, 30
-    {-2, -1,  0},  {-2,  0, -1},  {-1, -2,  0}, // 31, 32, 33
-    { 0, -2, -1},  {-1,  0, -2},  { 0, -1, -2}, // 34, 35, 36
-    {-1, -1, -1},  { 0,  0,  0}                 // 37, 38
-};
+        int i_dir = 0;
+        char name[256];
+        sprintf( name, "order.%d", i_order );
+        BOOST_FOREACH(ptree::value_type &order, pt.get_child(name)) {
+            assert(order.first.empty()); // array elements have no names
+            int i_pulse = 0;
+            BOOST_FOREACH(ptree::value_type& idx, order.second) {
+                dir_index[i_dir][i_pulse] = idx.second.get_value<int>();
+                printf("%d\n", idx.second.get_value<int>());
+                i_pulse ++;
+            }
+            i_dir ++;
+        }
+    }
+    catch (std::exception const& e) {
+        fprintf( stderr, "%s\n", e.what() );
+        exit(-1);
+    }
+}
 
 void ini_dir_index() {
     dir_index = new int** [n_order];
     for (int i_order = 0; i_order < n_order; i_order ++) {
         dir_index[i_order] = new int* [n_dir[i_order]];
         for (int i_dir = 0; i_dir < n_dir[i_order]; i_dir ++)
-            dir_index[i_order][i_dir] = new int [3]; // n_dim
+            dir_index[i_order][i_dir] = new int [3];
     }
-    for (int i_dim = 0; i_dim < 3; i_dim ++) {
-        for (int i_dir = 0; i_dir < n_dir[0]; i_dir ++)
-            dir_index[0][i_dir][i_dim] = dir_index_0[i_dir][i_dim];
-        if (n_order > 1)
-            for (int i_dir = 0; i_dir < n_dir[1]; i_dir ++)
-                dir_index[1][i_dir][i_dim] = dir_index_1[i_dir][i_dim];
-    }
+    readDirIndex( 1, dir_index[0] );
+    if (n_order > 1)
+        readDirIndex( 3, dir_index[1] );
 }
+
+// void ini_dir_index() {
+//     dir_index = new int** [n_order];
+//     for (int i_order = 0; i_order < n_order; i_order ++) {
+//         dir_index[i_order] = new int* [n_dir[i_order]];
+//         for (int i_dir = 0; i_dir < n_dir[i_order]; i_dir ++)
+//             dir_index[i_order][i_dir] = new int [3]; // n_pulse
+//     }
+//     for (int i_pulse = 0; i_pulse < 3; i_pulse ++) {
+//         for (int i_dir = 0; i_dir < n_dir[0]; i_dir ++)
+//             dir_index[0][i_dir][i_pulse] = dir_index_0[i_dir][i_pulse];
+//         if (n_order > 1)
+//             for (int i_dir = 0; i_dir < n_dir[1]; i_dir ++)
+//                 dir_index[1][i_dir][i_pulse] = dir_index_1[i_dir][i_pulse];
+//     }
+// }
 
 void del_dir_index() {
     for (int i_order = 0; i_order < n_order; i_order ++) {
