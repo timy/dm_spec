@@ -10,7 +10,7 @@ func = np.abs
 time = np.loadtxt( "res/time.dat" )
 grid = np.loadtxt( "res/grid_2d_0.dat")
 
-i_dir = 9
+i_dir = 34
 data = np.loadtxt( "res/ppar_2d_dpl0_coo2_%d_0.dat" % i_dir )
 
 ax = pymod_plot.plot_1d_init()
