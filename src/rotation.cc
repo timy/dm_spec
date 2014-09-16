@@ -36,11 +36,11 @@ void rotation_matrix( double phi, double theta, double psi,
 void rotate_transform( const double *v_a, double *v_b, double **mxRot )
 {
     // Usage: call rotation_matrix first.
-    // mxRot = mxRotF: 1. Within frame O, rotate the vector v_a by euler 
+    // mxRot = mxRotF: 1. Within frame O, rotate the vector v_a by euler
     //                    angle, the vector after rotation is v_b
     //                 2. Rotate frame O to a new frame O' by euler angle
     //                    the vector v_a in O' is vector v_b in O
-    
+
     // mxRot = mxRotB: 1. Rotate frame O to a new frame O' by euler angle
     //                 the vector v_a in O is vector v_b in O'
 

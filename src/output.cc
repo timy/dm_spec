@@ -8,43 +8,6 @@
 #define complex std::complex<double>
 #define EYE complex( 0.0, 1.0 )
 
-void output_k_and_r( long i_esmb, FILE *file, parameters *ps )
-{
-    // output format:
-    // k1_x, k1_y, k1_z, k2_x, k2_y, k2_z, k3_x, k3_y, k3_z
-
-    // phi, theta, psi for ensemble 1
-    // r_x,  r_y,  r_z for phi_1
-    // r_x,  r_y,  r_z for phi_2
-    // ...
-    // r_x,  r_y,  r_z for phi_44
-    // \n
-
-    // phi, theta, psi for ensemble 2
-    // ...
-
-    // output wave vector
-    if (i_esmb == 0) {
-        for (int i_pulse = 0; i_pulse < ps->n_pulse; i_pulse ++)
-            for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-                fprintf( file, "%le ", (ps->ef[i_pulse]->k0)
-                         * (ps->ef[i_pulse]->kuvL[i_dim]) );
-        fprintf( file, "\n\n" );
-    }
-
-    // output euler angle
-    fprintf( file, "%le %le %le\n",
-             ps->coord->phi, ps->coord->theta, ps->coord->psi );
-
-    // // output spatial points: FIXME!!!! for seidner only
-    // for (int i_phi = 0; i_phi < (ps->seid->n_phase); i_phi ++) {
-    //     for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-    //         fprintf( file, "%le ", ps->seid->rL[i_phi][i_dim] );
-    //     fprintf( file, "\n" );
-    // }
-    fprintf( file, "\n" );
-}
-
 void output_mol_orient( FILE* file, parameters *ps )
 {
     double phi = ps->coord->phi;
@@ -70,13 +33,6 @@ void output_ef_kL( FILE* file, parameters *ps )
         for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
             fprintf( file, "%le ", k0 * ps->ef[i_pulse]->kuvL[i_dim] );
     }
-}
-
-void input_ef_kL( FILE* file, double** kL, parameters *ps )
-{   // kL: n_pulse * n_dim
-    for (int i_pulse = 0; i_pulse < ps->n_pulse; i_pulse ++)
-        for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-            fscanf( file, "%le ", &(kL[i_pulse][i_dim]) );
 }
 
 void output_ef_kuvL( FILE* file, parameters *ps )

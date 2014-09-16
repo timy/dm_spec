@@ -64,3 +64,21 @@ You can configure the required number of nodes by just modifying
 Array of polarization:
 Generic: pol[nx][n_dpl][n_dim]
 Seidner: pol[n_phase][nx][n_dpl][n_dim]
+
+
+## Directions of field vectors
+The k-unit-vector in lab frame if you define the euler angle (phi, theta, psi):
+
+$$ kuvL_x = + sin(\phi) sin(\theta) $$
+
+$$ kuvL_y = - cos(\phi) sin(\theta) $$
+
+$$ kuvL_z =             cos(\theta) $$
+
+The E-unit-vector in lab frame if you define angle `chi` relative to the k-unit-vector:
+
+$$ EuvL_x = + sin(\phi) cos(\theta) cos(\psi+\chi) + cos(\phi) sin(\psi+\chi) $$
+
+$$ EuvL_y = - cos(\phi) cos(\theta) cos(\psi+\chi) + sin(\phi) sin(\psi+\chi) $$
+
+$$ EuvL_z =                                      - sin(\theta) cos(\psi+\chi) $$

@@ -5,12 +5,9 @@
 
 void output_info( para_file::file_type type, struct parameters* ps );
 
-void output_k_and_r( long i_esmb, FILE *file, struct parameters *ps );
-
 void output_mol_orient( FILE* file, struct parameters *ps );
 
 void output_ef_kL( FILE* file, struct parameters *ps );
-void input_ef_kL( FILE* file, double** kL, struct parameters *ps );
 void output_ef_kuvL( FILE* file, struct parameters *ps );
 void output_ef_kuvM( FILE* file, struct parameters *ps );
 void output_ef_EuvL( FILE* file, struct parameters *ps );
