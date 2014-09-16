@@ -82,3 +82,13 @@ $$ EuvL_x = + sin(\phi) cos(\theta) cos(\psi+\chi) + cos(\phi) sin(\psi+\chi) $$
 $$ EuvL_y = - cos(\phi) cos(\theta) cos(\psi+\chi) + sin(\phi) sin(\psi+\chi) $$
 
 $$ EuvL_z =                                      - sin(\theta) cos(\psi+\chi) $$
+
+So in order to control field polarization,
+If you want EuvL_x = 0:
+$$ \chi = -\psi + atan( - cos(\theta) * tan(\phi) ) $$
+
+If you want EuvL_y = 0:
+$$ \chi = -\psi + atan( + cos(\theta) / tan(\phi) ) $$
+
+If you want EuvL_z = 0:
+$$ \chi = -\psi + \pi / 2 $$
