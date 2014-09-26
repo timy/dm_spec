@@ -76,7 +76,7 @@ void prepare_bath_para( parameters *ps )
     double GmRate21 = GmRate10;
     double GmRate20 = 2.0 * re_ftcf_0;
 
-    double w12 = (ps->energy[1]) - (ps->energy[2]);
+    double w12 = (ps->energy->energy[1]) - (ps->energy->energy[2]);
 
     ps->bath->g12 = bath_gamma(  w12, ps );
     ps->bath->g21 = bath_gamma( -w12, ps );

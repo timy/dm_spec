@@ -118,10 +118,10 @@ void output_info( para_file::file_type type, parameters* ps )
 
     display_section( file, "core" );
     for (int i = 0; i < ps->n_lvl; i ++)
-        print_info( file, ps->energy[i]/C_cm2au );
+        print_info( file, ps->energy->energy[i]/C_cm2au );
     for (int i = 0; i < ps->n_dpl; i ++)
         for (int j = 0; j < ps->n_dim; j ++)
-            print_info( file, ps->dipole[i][j] );
+            print_info( file, ps->dipole->dipole[i][j] );
     for (int i = 0; i < ps->n_dim; i ++)
         print_info( file, ps->pos[i] );
 

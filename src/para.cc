@@ -1,3 +1,5 @@
+#include "energy.h"
+#include "dipole.h"
 #include "para.h"
 #include "position.h"
 #include "timestep.h"
@@ -36,6 +38,8 @@ void para_ini( parameters *ps, const char* file_name, long size, long rank )
     para_core_ini( &cfg, ps );
     para_pos_ini( &cfg, ps );
     // sub-systems
+    para_energy_ini( &cfg, ps );
+    para_dipole_ini( &cfg, ps );
     para_pols_ini( &cfg, ps );
     para_file_ini( &cfg, ps );
     para_help_ini( &cfg, ps );
@@ -73,6 +77,8 @@ void para_del( parameters *ps )
     para_help_del( ps );
     para_file_del( ps );
     para_pols_del( ps );
+    para_dipole_del( ps );
+    para_energy_del( ps );
     //
     para_pos_del( ps );
     para_core_del( ps );
@@ -85,19 +91,10 @@ void para_core_ini( config_t* cfg, parameters *ps )
 {
     // n_dim, n_lvl, n_dpl, n_eom
     para_core_config( cfg, ps );
-    // energy, dipole, position
-    ps->energy = new double [ps->n_lvl];
-    ps->dipole = new double* [ps->n_dpl];
-    for (int i = 0; i < ps->n_dpl; i ++)
-        ps->dipole[i] = new double [ps->n_dim];
 }
 
 void para_core_del( parameters *ps )
 {
-    for (int i = 0; i < ps->n_dpl; i ++)
-        delete[] ps->dipole[i];
-    delete[] ps->dipole;
-    delete[] ps->energy;
 }
 
 void para_core_config( config_t* cfg, parameters* ps )

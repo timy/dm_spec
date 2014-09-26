@@ -20,7 +20,7 @@ int main( int argc, char* argv[] )
 {
     tic();
 
-    parameters ps; ps.f_eom = equation_of_motion_full;
+    parameters ps;
     para_ini( &ps, "cfg/parameters.cfg" );
 
     if (ps.pols->method_ppar != para_pols::SEIDNER) {

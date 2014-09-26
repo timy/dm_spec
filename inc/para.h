@@ -13,6 +13,18 @@ namespace std { template<typename T> class complex; }
 #define C_om2wv   1.37807e8             // k[m^-1] = C_om2wv * W[a.u.]
                                         //         == 200 * PI * W[cm^-1]
 
+struct para_energy
+{
+    int* index;
+    double *energy;
+};
+
+struct para_dipole
+{
+    int** index;
+    double **dipole;
+};
+
 struct para_bath
 {
     double g;
@@ -182,7 +194,7 @@ struct para_help
 
 struct para_pols
 {
-    int bPolForEachDpl = false;
+    int bPolForEachDpl;
     int n_dpl;
     int n_dim;
 
@@ -201,8 +213,6 @@ struct parameters
 
     int n_pulse;
 
-    double *energy;      // energy
-    double **dipole;     // transition dipole
     double *pos;         // position in lab frame
 
     double *time;
@@ -222,6 +232,8 @@ struct parameters
     long n_t;
 
     // sub-systems
+    struct para_energy *energy;
+    struct para_dipole *dipole;
     struct para_repr *repr;
     struct para_bath *bath;
     struct para_coord *coord;

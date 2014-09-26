@@ -90,23 +90,9 @@ void ptot_from_dm( complex ***pol, double **rho, parameters *ps, long ig )
         pol_M[i_dpl] = new complex [ps->n_dim];
 
     for (long it = 0; it < ps->nt; it ++) {
-        // change here for different energy structure!
-        // ptot_from_dm_7lv( pol_M, rho[it], ps );
         ptot_from_dm_org( pol_M, rho[it], ps );
-
-        for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {
+        for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
             coord_from_mol_to_lab( pol_M[i_dpl], pol[ig+it][i_dpl], ps );
-        }
-        // for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-        //     // pol[ig+it][i_dim] = pol_M[i_dim];
-        //     pol[ig+it][i_dim] = complex( 0.0, 0.0 );
-        //     for (int j = 0; j < ps->n_dim; j ++)
-        //         pol[ig+it][i_dim] += ps->coord->mxRotF[i_dim][j] * pol_M[j];
-        // }
-
-        // for Pullerits's method
-        // for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-        //     pol[ig+it][i_dim] = pol_M[i_dim];
     }
 
     for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
@@ -116,37 +102,25 @@ void ptot_from_dm( complex ***pol, double **rho, parameters *ps, long ig )
 
 void ptot_from_dm_org( complex** pol_M, double* rho, parameters *ps )
 {
-    // pol_M: n_dpl * n_dim
-    double mu_10[3], mu_20[3], mu_31[3], mu_32[3];
-    for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-        mu_10[i_dim] = ps->dipole[0][i_dim];
-        mu_20[i_dim] = ps->dipole[1][i_dim];
-        mu_31[i_dim] = ps->dipole[2][i_dim];
-        mu_32[i_dim] = ps->dipole[3][i_dim];
-    }
-    complex r10 = complex( rho[4],  rho[5]  );
-    complex r20 = complex( rho[6],  rho[7]  );
-    complex r31 = complex( rho[8],  rho[9]  );
-    complex r32 = complex( rho[10], rho[11] );
-    // complex r12 = complex( rho[12], rho[13] );
-    // complex r30 = complex( rho[14], rho[15] );
-    for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
-        if (ps->pols->bPolForEachDpl == true) {
-            pol_M[0][i_dim] = 2.0 * real( mu_10[i_dim] * r10 );
-            pol_M[1][i_dim] = 2.0 * real( mu_20[i_dim] * r20 );
-            pol_M[2][i_dim] = 2.0 * real( mu_31[i_dim] * r31 );
-            pol_M[3][i_dim] = 2.0 * real( mu_32[i_dim] * r32 );
-        } else {
-            pol_M[0][i_dim] = 2.0 * real( mu_10[i_dim] * r10 + mu_20[i_dim] * r20 +
-                                          mu_31[i_dim] * r31 + mu_32[i_dim] * r32 );
-        }
-    }
-}
+    complex* r = new complex [ps->n_dpl]; // TODO: move to outside to reduce allocation
 
-// should be modified to double* rho, since we can negelct the time index
-void ptot_from_dm_7lv( complex* pol_M, double* rho, parameters *ps )
-{
+    for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++) {
+        int m = ps->dipole->index[i_dpl][0];
+        int n = ps->dipole->index[i_dpl][1]; // == (4,5), (6,7), (12,13), (14,15)
+        int idx = ps->n_lvl + m * (m-1) + 2 * n; // TODO: this is the idx formula, move to
+        r[i_dpl] = complex( rho[idx], rho[idx+1] ); // global scope, and pre-calcualte it
+    }
+
+    double** dipole = ps->dipole->dipole;
     for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-        pol_M[i_dim] = 2.0 * real( ps->dipole[0][i_dim] * complex(rho[7], rho[8]) + ps->dipole[1][i_dim] * complex(rho[9], rho[10]) + ps->dipole[2][i_dim] * complex(rho[11], rho[12]) + ps->dipole[3][i_dim] * complex(rho[13], rho[14]) + ps->dipole[4][i_dim] * complex(rho[15], rho[16]) + ps->dipole[5][i_dim] * complex(rho[17], rho[18]) + ps->dipole[6][i_dim] * complex(rho[19], rho[20]) + ps->dipole[7][i_dim] * complex(rho[21], rho[22]) + ps->dipole[8][i_dim] * complex(rho[23], rho[24]) + ps->dipole[9][i_dim] * complex(rho[25], rho[26]) + ps->dipole[10][i_dim] * complex(rho[27], rho[28]) + ps->dipole[11][i_dim] * complex(rho[29], rho[30]) + ps->dipole[12][i_dim] * complex(rho[31], rho[32]) + ps->dipole[13][i_dim] * complex(rho[33], rho[34]) + ps->dipole[14][i_dim] * complex(rho[35], rho[36]) + ps->dipole[15][i_dim] * complex(rho[37], rho[38]) + ps->dipole[16][i_dim] * complex(rho[39], rho[40]) + ps->dipole[17][i_dim] * complex(rho[41], rho[42]) + ps->dipole[18][i_dim] * complex(rho[43], rho[44]) + ps->dipole[19][i_dim] * complex(rho[45], rho[46]) + ps->dipole[20][i_dim] * complex(rho[47], rho[48]) );
-    return;
+        if (ps->pols->bPolForEachDpl == true) {
+            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+                pol_M[i_dpl][i_dim] = 2.0 * real( dipole[i_dpl][i_dim] * r[i_dpl] );
+        } else {
+            complex s = 0.0;
+            for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+                s += dipole[i_dpl][i_dim] * r[i_dpl];
+            pol_M[0][i_dim] = 2.0 * real(s);
+        }
+    delete[] r;
 }
