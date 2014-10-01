@@ -99,11 +99,14 @@ The config file may contain a chunk of data that is not easy to be expressed wit
 The current format in each line for energy and dipole data:
 
 energy.cfg (2 columns):
-+--------------+--------------+
+
+| 1            | 2            |
+|--------------| -------------|
 | level_index  | energy_value |
-+--------------+--------------+
+
 
 dipole.cfg (5 columns):
-+---------------+---------------+----------+----------+----------+
+
+| 1             | 2             | 3        | 4        | 5        |
+|---------------|---------------|----------|----------|----------|
 | level_index_a | level_index_b | dipole_x | dipole_y | dipole_z |
-+---------------+---------------+----------+----------+----------+
