@@ -92,3 +92,5 @@ $$ \chi = -\psi + atan( + cos(\theta) / tan(\phi) ) $$
 
 If you want EuvL_z = 0:
 $$ \chi = -\psi + \pi / 2 $$
+
+## Config Data Format (CDF)
