@@ -76,7 +76,7 @@ the other half are just the complex conjugates of the former.
 Therefore, if the equations are all for real variables,
 the number of equation of motions is given by
 `n_eom = n + 2 * (n*(n-1)/2) = n * n`,
-as is defined in [para.cc](src/para.cc).
+as is defined in [para.cc](src/para.cc#L105).
 
 ## Array of polarization:
 
@@ -150,6 +150,6 @@ The current format in each line for energy and dipole data:
 | level_index_a | level_index_b | dipole_x | dipole_y | dipole_z |
 
 - Each line in configuration file should contain characters less than 1024
-  as defined by `#define NMAX 1024` in [cdf.cc](src/cdf.cc).
+  as defined by `#define NMAX 1024` in [cdf.cc](src/cdf.cc#L21).
 - One can include blank or comment lines (`//` like in C++) in config files
   which are neglected.
