@@ -102,9 +102,8 @@ void para_core_config( config_t* cfg, parameters* ps )
     config_lookup_int( cfg, "basic.n_dim", &(ps->n_dim) );
     config_lookup_int( cfg, "basic.n_lvl", &(ps->n_lvl) );
     config_lookup_int( cfg, "basic.n_dpl", &(ps->n_dpl) );
-    config_lookup_int( cfg, "basic.n_eom", &(ps->n_eom) );
+    ps->n_eom = ps->n_lvl * ps->n_lvl;
     assert( ps->n_dim > 0 );
     assert( ps->n_lvl > 0 );
     assert( ps->n_dpl > 0 );
-    assert( ps->n_eom > 0 );
 }
