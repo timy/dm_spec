@@ -43,10 +43,6 @@ void clean_pol_array( int dim, complex ***pol, parameters *ps )
     if (ps->mvar->dimGrid == 1 && dim == 2)
         n_grid *= (ps->mpic->njob); // 2d
 
-    // deleted later!
-    // for (long i_grid = 0; i_grid < n_grid; i_grid ++)
-    //     delete[] pol[i_grid];
-    // delete[] pol;
     for (long i_grid = 0; i_grid < n_grid; i_grid ++) {
         for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {
             delete[] pol[i_grid][i_dpl];

@@ -76,14 +76,22 @@ the other half are just the complex conjugates of the former.
 Therefore, if the equations are all for real variables,
 the number of equation of motions is given by
 `n_eom = n + 2 * (n*(n-1)/2) = n * n`,
-as is defined in `src/para.cc`.
+as is defined in [para.cc](src/para.cc).
 
 ## Array of polarization:
+
+The array for generic polarization is prepared or cleaned in [src/polar.cc](src/polar.cc).
+The polarization for Seidner's method has an extra rank in order to distinguish results
+from different spatial phases:
 
 - Generic: `pol[nx][n_dpl][n_dim]`
 
 - Seidner: `pol[n_phase][nx][n_dpl][n_dim]`
 
+The variable `nx` may include all varying variables. In the simplest case,
+`nx = nt`, which is just a 1D grid along the detection time.
+For 2D case, the coherence time $\tau$ is also varied for typical 2D spectroscopy,
+`nx = nt * n_tau`.
 
 ## Directions of field vectors
 
