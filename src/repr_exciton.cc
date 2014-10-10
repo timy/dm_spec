@@ -6,14 +6,19 @@
 
 void repr_set_exciton_dimer( parameters *ps, para_repr_dimer_local *pdl )
 {
+    // one may add fluctuations here
+    double EA = pdl->EA; //+ random_normal() * 200.0 * C_cm2au;
+    double EB = pdl->EB; //+ random_normal() * 200.0 * C_cm2au;
+    double J  = pdl->J;
+
     // some useful values
-    double E_sum = (pdl->EA) + (pdl->EB);
-    double E_dif = (pdl->EA) - (pdl->EB);
+    double E_sum = EA + EB;
+    double E_dif = EA - EB;
     double E_dif_2 = E_dif * E_dif;
-    double J2 = (pdl->J) * (pdl->J);
+    double J2 = J * J;
 
     // mixture angle
-    double theta = 0.5 * atan2( 2.0*(pdl->J), E_dif );
+    double theta = 0.5 * atan2( 2.0 * J, E_dif );
     double s_theta = sin( theta );
     double c_theta = cos( theta );
 

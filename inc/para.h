@@ -50,6 +50,7 @@ struct para_repr
         GENERIC,
         DIMER
     } type;
+    void* ptrSt;
 };
 
 struct para_coord
