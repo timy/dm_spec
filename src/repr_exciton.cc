@@ -62,7 +62,7 @@ void para_repr_dimer_config( config_t *cfg, para_repr_dimer_local *pdl )
 {
     config_setting_t *setting_1, *setting_2;
     // EA, EB
-    setting_1 = config_lookup( cfg, "dimer.E" );
+    setting_1 = config_lookup( cfg, "repr.dimer.E" );
     int n_E = config_setting_length( setting_1 );
     assert( n_E == 2 );
     pdl->EA = config_setting_get_float_elem( setting_1, 0 );
@@ -71,11 +71,11 @@ void para_repr_dimer_config( config_t *cfg, para_repr_dimer_local *pdl )
     pdl->EB *= C_cm2au;
 
     // J
-    config_lookup_float( cfg, "dimer.J", &(pdl->J) );
+    config_lookup_float( cfg, "repr.dimer.J", &(pdl->J) );
     pdl->J *= C_cm2au;
 
     // mu_A, mu_B
-    setting_1 = config_lookup( cfg, "dimer.mu" );
+    setting_1 = config_lookup( cfg, "repr.dimer.mu" );
     int n_mu = config_setting_length( setting_1 );
     assert( n_mu == 2 );
     setting_2 = config_setting_get_elem( setting_1, 0 );

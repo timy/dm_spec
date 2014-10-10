@@ -19,7 +19,7 @@ int main( int argc, char* argv[] )
 
     if (rank == 0) tic ();
     // obtain basic parameters
-    parameters ps = { .f_eom = equation_of_motion_full };
+    parameters ps;
     para_ini( &ps, "cfg/parameters.cfg", size, rank );
 
     // actual calculation

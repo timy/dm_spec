@@ -46,6 +46,10 @@ struct para_bath
 struct para_repr
 {
     double theta;
+    enum {
+        GENERIC,
+        DIMER
+    } type;
 };
 
 struct para_coord

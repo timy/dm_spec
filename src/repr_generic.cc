@@ -21,10 +21,10 @@ void para_repr_generic_config( config_t *cfg, parameters* ps )
 {
     const char* name = NULL;
 
-    config_lookup_string( cfg, "generic.E", &name );
+    config_lookup_string( cfg, "repr.generic.E", &name );
     cdf_read( name, ps->n_lvl, sscanf_st_energy, ps );
 
-    config_lookup_string( cfg, "generic.mu", &name );
+    config_lookup_string( cfg, "repr.generic.mu", &name );
     cdf_read( name, ps->n_dpl, sscanf_st_dipole, ps );
 }
 
