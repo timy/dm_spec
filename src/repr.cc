@@ -5,7 +5,7 @@
 #include <cassert>
 
 void para_repr_config( config_t* cfg, parameters* ps );
-void para_repr_dimer_config( config_t *cfg, para_repr_dimer_local *pdl );
+void para_repr_dimer_config( config_t *cfg, parameters* ps );
 void para_repr_generic_config( config_t *cfg, parameters* ps );
 
 #include <cstring>
@@ -18,17 +18,31 @@ void para_repr_ini( config_t* cfg, parameters* ps )
     para_repr_config( cfg, ps );
 
     if (ps->repr->type == para_repr::GENERIC) {
+        para_repr_generic* ptr = new para_repr_generic;
+        ptr->E = new double [ps->n_lvl];
+        ptr->mu = new double* [ps->n_dpl];
+        for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++) {
+            ptr->mu[i_dpl] = new double [ps->n_dim];
+        }
+        ps->repr->ptrSt = ptr;
         para_repr_generic_config( cfg, ps );
+        repr_set_generic( ps );
     } else if (ps->repr->type == para_repr::DIMER) {
         ps->repr->ptrSt = new para_repr_dimer_local;
-        para_repr_dimer_config( cfg, (para_repr_dimer_local*) ps->repr->ptrSt );
-        repr_set_exciton_dimer( ps, (para_repr_dimer_local*) ps->repr->ptrSt );
+        para_repr_dimer_config( cfg, ps );
+        repr_set_exciton_dimer( ps );
     }
 }
 
 void para_repr_del( parameters *ps )
 {
     if (ps->repr->type == para_repr::GENERIC) {
+        para_repr_generic* ptr = (para_repr_generic*) ps->repr->ptrSt;
+        for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+            delete[] ptr->mu[i_dpl];
+        delete[] ptr->mu;
+        delete[] ptr->E;
+        delete ptr;
     } else if (ps->repr->type == para_repr::DIMER) {
         delete ps->repr->ptrSt;
     }

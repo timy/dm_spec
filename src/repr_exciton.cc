@@ -4,8 +4,10 @@
 #include <cmath>
 #include <cassert>
 
-void repr_set_exciton_dimer( parameters *ps, para_repr_dimer_local *pdl )
+void repr_set_exciton_dimer( parameters *ps )
 {
+    para_repr_dimer_local* pdl = (para_repr_dimer_local*) ps->repr->ptrSt;
+
     // one may add fluctuations here
     double EA = pdl->EA; //+ random_normal() * 200.0 * C_cm2au;
     double EB = pdl->EB; //+ random_normal() * 200.0 * C_cm2au;
@@ -63,8 +65,9 @@ void repr_set_exciton_dimer( parameters *ps, para_repr_dimer_local *pdl )
 }
 
 #include <libconfig.h>
-void para_repr_dimer_config( config_t *cfg, para_repr_dimer_local *pdl )
+void para_repr_dimer_config( config_t *cfg, parameters* ps )
 {
+    para_repr_dimer_local* pdl = (para_repr_dimer_local*) ps->repr->ptrSt;
     config_setting_t *setting_1, *setting_2;
     // EA, EB
     setting_1 = config_lookup( cfg, "repr.dimer.E" );

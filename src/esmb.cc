@@ -52,8 +52,9 @@ void para_esmb_update( long i_esmb, parameters *ps )
     // output_mol_orient( ps->file->one[para_file::ORIENT]->fptr, ps );
 
     if (ps->repr->type == para_repr::GENERIC) {
+        repr_set_generic( ps );
     } else if (ps->repr->type == para_repr::DIMER) {
-        repr_set_exciton_dimer( ps, (para_repr_dimer_local*) ps->repr->ptrSt );
+        repr_set_exciton_dimer( ps );
     }
 
     set_para_bath( ps );

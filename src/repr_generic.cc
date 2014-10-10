@@ -3,10 +3,11 @@
 #include "cdf.h"
 #include <cstdio>
 
-void repr_set_generic( parameters *ps, para_repr_generic *pg )
+void repr_set_generic( parameters *ps )
 {
+    para_repr_generic* pg = (para_repr_generic*) ps->repr->ptrSt;
     for (int i_lvl = 0; i_lvl < ps->n_lvl; i_lvl ++)
-        ps->energy->energy[i_lvl] = pg->E[i_lvl];
+        ps->energy->energy[i_lvl] = pg->E[i_lvl]; //+ random_normal() * 200.0 * C_cm2au;
 
     for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
         for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
@@ -30,7 +31,7 @@ void para_repr_generic_config( config_t *cfg, parameters* ps )
 
 void sscanf_st_energy( char* buf, int i, parameters* ps ) {
     int* index = ps->energy->index;
-    double* energy = ps->energy->energy;
+    double* energy = ((para_repr_generic*) ps->repr->ptrSt)->E;
     int nCol = sscanf( buf, "%d %lf", &(index[i]), &(energy[i]) );
     energy[i] *= C_cm2au;
     if (nCol != 2)
@@ -39,7 +40,7 @@ void sscanf_st_energy( char* buf, int i, parameters* ps ) {
 
 void sscanf_st_dipole( char* buf, int i, parameters* ps ) {
     int** index = ps->dipole->index;
-    double** dipole = ps->dipole->dipole;
+    double** dipole = ((para_repr_generic*) ps->repr->ptrSt)->mu;
     int nCol = sscanf( buf, "%d %d %lf %lf %lf", &(index[i][0]), &(index[i][1]),
                        &(dipole[i][0]), &(dipole[i][1]), &(dipole[i][2]) );
     if (nCol != 5)
