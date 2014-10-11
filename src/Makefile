@@ -7,7 +7,7 @@ EXE		=	$(DIR_BASE)/test
 
 OBJ_CORE	=	$(join $(addsuffix $(DIR_SRC)/, $(dir $(SRC_CORE))), \
 				$(notdir $(SRC_CORE:.cc=.o)))
-CFLAGS	+= 	#-DUSE_MPI
+CFLAGS	+= 	-DUSE_MPI
 
 %.o : %.cc
 	$(CC) $< $(CFLAGS) -c -o $@
