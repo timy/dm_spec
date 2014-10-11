@@ -1,7 +1,7 @@
 DIR_BASE	=	..
 include $(DIR_BASE)/Makefile.in
 
-SRC		=	seidner_main_single.cc
+SRC		=	main_mpi.cc
 OBJ		=	$(SRC:%.cc=%.o)
 EXE		=	$(DIR_BASE)/test
 

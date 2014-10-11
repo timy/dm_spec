@@ -133,11 +133,11 @@ formats and transfer data to `para` structure by invoking `sscanf` function.
 The example/template can be found in file [repr_generic.cc](src/repr_generic.cc).
 Two steps are needed:
 
-- Call [`cdf_read( file_name, n_lines, sscanf_structure, ps )`](src/repr_generic.cc#L25)
-- Define the callback funciton [`sscanf_structure`](src/repr_generic.cc#L31)
+- Call [`cdf_read( file_name, n_lines, sscanf_structure, ps )`](src/repr_generic.cc#L26)
+- Define the callback funciton [`sscanf_structure`](src/repr_generic.cc#L32)
 
-The callback functions [`sscanf_st_energy`](src/repr_generic.cc#L31)
-and [`sscanf_st_dipole`](src/repr_generic.cc#L40) show how energy and
+The callback functions [`sscanf_st_energy`](src/repr_generic.cc#L32)
+and [`sscanf_st_dipole`](src/repr_generic.cc#L41) show how energy and
 dipole are defined. In the routine, it is also a good place to check if config data
 has any problem.
 
@@ -166,3 +166,11 @@ The current format in each line for energy and dipole data are as following,
   [dipole.cfg](cfg/dipole.cfg)
   should agree with `n_dpl` defined in [parameters.cfg](cfg/parameters.cfg#L4).
   If not, function [cdf_read](src/cdf.cc#L75-78) will complain.
+
+
+# TODO List
+
+- [ ] let main_mpi.cc work for repr.type = GENERIC
+- [ ] add dacay rate for new ODE
+- [ ] index with JSON format
+- [ ] parameters with JSON format
