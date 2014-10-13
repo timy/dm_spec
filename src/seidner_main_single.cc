@@ -21,7 +21,8 @@ int main( int argc, char* argv[] )
     tic();
 
     parameters ps;
-    para_ini( &ps, "cfg/parameters.cfg" );
+    const char dirBase[] = "./";
+    para_ini( &ps, dirBase );
 
     if (ps.pols->method_ppar != para_pols::SEIDNER) {
         fprintf( stderr, "You need to set pols.ppar_calc_method"

@@ -66,19 +66,24 @@ void cdf_read_driver( FILE* file, void (*sscanf_st)( char*, int, parameters* ),
     file_walk_lines( file, proc_cdf_read_driver, (void*)&st );
 }
 
+#include <cstring>
 void cdf_read( const char* name, int count, void (*sscanf_st)( char*, int, parameters* ),
               parameters* ps )
 {
+    char file_name[1024];
+    strcpy( file_name, ps->dirBase );
+    strcat( file_name, name );
+
     FILE* file = NULL;
-    if (NULL != (file = fopen( name, "r" )))  {
+    if (NULL != (file = fopen( file_name, "r" )))  {
         int nLine = file_count_lines( file );
         if (count != nLine)
             fprintf( stderr, "CDF warning: no. of lines (%d) in file %s does not agree with "
                      "no. of data (%d) defined in configuration file.\n",
-                     nLine, name, count );
+                     nLine, file_name, count );
         cdf_read_driver( file, sscanf_st, ps );
         fclose( file );
     } else {
-        fprintf( stderr, "CDF error: Cannot open file %s", name );
+        fprintf( stderr, "CDF error: Cannot open file %s.\n", file_name );
     }
 }

@@ -176,6 +176,6 @@ The current format in each line for energy and dipole data are as following,
     [parameters.cfg](cfg/parameters.cfg)
   - 2D calcuation: loop over tau is changed to loop over T in [mvar.cc](src/mvar.cc#L213-218)
 - [ ] add dacay rate for new ODE
-- [ ] CDF may use absolute path, so I cannot use it in subdir, adjust this.
+- [x] CDF may use absolute path, so I cannot use it in subdir, adjust this.
 - [ ] index with JSON format
 - [ ] parameters with JSON format

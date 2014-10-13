@@ -222,9 +222,6 @@ struct parameters
 
     double *time;
 
-    // parameters
-    // double k0;
-    // double Om;
     double tau;
     double T;
     double t;
@@ -235,6 +232,8 @@ struct parameters
     long it0;
     double d_t;
     long n_t;
+
+    char dirBase[1024];
 
     // sub-systems
     struct para_energy *energy;
@@ -255,7 +254,7 @@ struct parameters
     int (*f_eom)( double, const double*, double*, void* );
 };
 
-void para_ini( struct parameters *ps, const char* file_name,
+void para_ini( struct parameters *ps, const char* dirBase,
                long size=1, long rank=0 );
 void para_del( struct parameters *ps );
 

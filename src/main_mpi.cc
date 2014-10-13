@@ -20,7 +20,8 @@ int main( int argc, char* argv[] )
     if (rank == 0) tic ();
     // obtain basic parameters
     parameters ps;
-    para_ini( &ps, "cfg/parameters.cfg", size, rank );
+    const char dirBase[] = "./";
+    para_ini( &ps, dirBase, size, rank );
 
     // actual calculation
     // mvar_calc_esmb( &ps );

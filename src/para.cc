@@ -29,8 +29,13 @@ void para_init_config_write( parameters* ps );
 #include <libconfig.h>
 
 // overall
-void para_ini( parameters *ps, const char* file_name, long size, long rank )
+void para_ini( parameters *ps, const char* dirBase, long size, long rank )
 {
+    char file_name[1024];
+    strcpy( ps->dirBase, dirBase );
+    strcpy( file_name, ps->dirBase );
+    strcat( file_name, "cfg/parameters.cfg" );
+
     // configuration file
     config_t cfg;
     config_file_ini( &cfg, file_name );

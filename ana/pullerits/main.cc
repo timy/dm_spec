@@ -180,10 +180,11 @@ void ppar_extract_pullerits_process( int i_order, complex**** ptot,
     }
 }
 
-void ppar_extract_pullerits_main_frame( int i_order, complex***** ppar, char* cfg_file ) {
+void ppar_extract_pullerits_main_frame( int i_order, complex***** ppar, const char* dirBase )
+{
     // prepare parameters
     parameters ps; ps.f_eom = NULL;
-    para_ini( &ps, cfg_file );
+    para_ini( &ps, dirBase );
     // create temporary array ptot. ptot[0] is used for file data
     // ptot[1] is used for work array, if necessary
     complex ****ptot = new complex*** [2];
@@ -193,11 +194,11 @@ void ppar_extract_pullerits_main_frame( int i_order, complex***** ppar, char* cf
     for (int rank = 0; rank < n_node; rank ++) {
         // prepare parameter for each node
         parameters ps1; ps1.f_eom = NULL;
-        para_ini( &ps1, cfg_file, n_node, rank );
+        para_ini( &ps1, dirBase, n_node, rank );
         // open files for ptot and rl
         int file_idx[1] = { (int)ps1.mpic->rank };
-        open_para_file( para_file::RL, "../../", &ps1, 1, NULL, file_idx, "r" );
-        open_para_file( para_file::PTOT_2D, "../../", &ps1, 1, NULL, file_idx, "r" );
+        open_para_file( para_file::RL, dirBase, &ps1, 1, NULL, file_idx, "r" );
+        open_para_file( para_file::PTOT_2D, dirBase, &ps1, 1, NULL, file_idx, "r" );
         // loop over ensemble, process data block from a single file
         for (int i_esmb = 0; i_esmb < ps1.esmb->n_esmb; i_esmb ++) {
             if (i_esmb % 20000 == 0)
@@ -225,10 +226,10 @@ void ppar_extract_pullerits_main_frame( int i_order, complex***** ppar, char* cf
     para_del( &ps );
 }
 
-void ppar_extract_pullerits( char* cfg_file ) {
+void ppar_extract_pullerits( const char* dirBase ) {
     // prepare parameters
     parameters ps; ps.f_eom = NULL;
-    para_ini( &ps, cfg_file );
+    para_ini( &ps, dirBase );
     // prepare arrays ppar: 2 x n_dir x (nt x ns) x n_dpl x n_dim
     complex***** ppar = new complex**** [n_order];
     for (int i_order = 0; i_order < n_order; i_order ++) {
@@ -238,7 +239,7 @@ void ppar_extract_pullerits( char* cfg_file ) {
     }
     // main process and output results ppar for different orders
     for (int i_order = 0; i_order < n_order; i_order ++) {
-        ppar_extract_pullerits_main_frame( i_order, ppar, cfg_file );
+        ppar_extract_pullerits_main_frame( i_order, ppar, dirBase );
         io_pol_dir_write( para_file::PPAR_2D, ppar[i_order],
                           n_dir[i_order], NULL, &ps );
     }
@@ -268,11 +269,12 @@ void display_dir_index() {
 }
 
 int main( int argc, char* argv[] ) {
-    char cfg_file[] = "../../cfg/parameters.cfg";
-    postproc_collect_mpi_grid( cfg_file, n_node, "../../" );
+    // char cfg_file[] = "../../cfg/parameters.cfg";
+    const char dirBase[] = "../../";
+    postproc_collect_mpi_grid( n_node, dirBase );
     ini_dir_index();
     display_dir_index();
-    ppar_extract_pullerits( cfg_file );
+    ppar_extract_pullerits( dirBase );
     del_dir_index();
     fprintf( stdout, "Hasta la vista!\n" );
 }

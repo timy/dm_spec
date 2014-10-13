@@ -10,16 +10,16 @@
 // a res dir storing all output from MPI computation. After post-process,
 // data will be output to current-dir/res, irrelevant to prefix.
 
-void postproc_collect_mpi_grid( char* cfg_file, int n_node, const char* prefix )
+void postproc_collect_mpi_grid( int n_node, const char* dirBase )
 {
     parameters ps; ps.f_eom = NULL;
-    para_ini( &ps, cfg_file );
+    para_ini( &ps, dirBase );
     double* grid = new double [ps.mpic->njob];
     for (int rank = 0; rank < n_node; rank ++) {
         parameters ps1; ps1.f_eom = NULL;
-        para_ini( &ps1, cfg_file, n_node, rank );
+        para_ini( &ps1, dirBase, n_node, rank );
         ps1.esmb->with_old = 0;
-        io_grid_read( para_file::GRID_2D, grid, prefix, &ps1 );
+        io_grid_read( para_file::GRID_2D, grid, dirBase, &ps1 );
         para_del( &ps1 );
     }
     io_grid_write( para_file::GRID_2D, grid, NULL, &ps );
