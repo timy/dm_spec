@@ -118,6 +118,9 @@ struct para_node
 {
     long n_esmb;
     long n_mvar;
+
+    long esmb_0;
+    long mvar_0;
 };
 
 typedef struct _IO_FILE FILE;

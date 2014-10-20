@@ -107,7 +107,7 @@ void loopAssign_1( complex*** pol_0,
                    st_par* par, parameters* ps ) {
     for (long is = 0; is < ps->node->n_mvar; is ++)
         for (long it = 0; it < ps->nt; it ++) {
-            long index = (ps->mpic->idx0 + is) * (ps->nt) + it;
+            long index = (ps->node->mvar_0 + is) * (ps->nt) + it;
             for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
                     func( pol_0[index][i_dpl][i_dim], par );
@@ -120,7 +120,7 @@ void loopAssign_2( complex*** pol_0, complex*** pol_1,
                    st_par* par, parameters* ps ) {
     for (long is = 0; is < ps->node->n_mvar; is ++)
         for (long it = 0; it < ps->nt; it ++) {
-            long index = (ps->mpic->idx0 + is) * (ps->nt) + it;
+            long index = (ps->node->mvar_0 + is) * (ps->nt) + it;
             for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
                 for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++) {
                     func( pol_0[index][i_dpl][i_dim], pol_1[index][i_dpl][i_dim], par );

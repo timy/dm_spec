@@ -26,7 +26,7 @@ void mvar_output_grid( para_file::file_type type, parameters *ps );
 
 //     gsl_rng_set( (gsl_rng*) ps->esmb->rng, ps->mpic->rank + 1 );
 
-//     long i_esmb_0 = ps->mpic->idx0;
+//     long i_esmb_0 = ps->node->esmb_0;
 //     long i_esmb_1 = i_esmb_0 + ps->node->n_esmb;
 
 //     // fprintf( stdout, "rank=%-3ld, i_esmb_0=%-6ld, i_esmb_1=%-6ld\n",
@@ -207,7 +207,7 @@ void para_mvar_update( parameters* ps )
 void mvar_update( long is, long i_esmb, parameters *ps )
 {
     // the current value of variable
-    double y = ps->mvar->y0 + (ps->mpic->idx0 + is) * ps->mvar->dy;
+    double y = ps->mvar->y0 + (ps->node->mvar_0 + is) * ps->mvar->dy;
 
     // coherence time (2D echo)
     // 2nd pulse is not changed, 1st pulse is changed
@@ -224,7 +224,7 @@ void mvar_output_grid( para_file::file_type type, parameters *ps )
 {
     double *s = new double[ps->node->n_mvar];
     for (long is = 0; is < ps->node->n_mvar; is ++) {
-        s[is] = ps->mvar->y0 + (ps->mpic->idx0 + is) * ps->mvar->dy;
+        s[is] = ps->mvar->y0 + (ps->node->mvar_0 + is) * ps->mvar->dy;
         s[is] /= C_fs2au;
     }
     io_grid_write( para_file::GRID_2D, s, NULL, ps );

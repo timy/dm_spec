@@ -221,7 +221,7 @@ void io_grid_read( para_file::file_type type, double *s,
     int file_idx[1] = { (int) ps->mpic->rank };
     open_para_file( type, prefix, ps, 1, NULL, file_idx, "r" );
     for (long is = 0; is < ps->node->n_mvar; is ++) {
-        long index = ps->mpic->idx0 + is;
+        long index = ps->node->mvar_0 + is;
         fscanf( ps->file->item[type]->f[0]->fptr, "%le", &s[index] );
     }
     close_para_file( type, ps );
@@ -264,7 +264,7 @@ void io_pol_read( para_file::file_type type, complex*** pol, parameters* ps )
     int idx[2];
     double re, im;
     long ns = ps->node->n_mvar;
-    long idx0 = ps->mpic->idx0;
+    long idx0 = ps->node->mvar_0;
     if ( ps->esmb->with_old == 1 )
         idx0 = 0;
     for (int is = 0; is < ns; is ++)
