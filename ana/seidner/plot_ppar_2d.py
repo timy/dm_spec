@@ -30,7 +30,7 @@ ax = pymod_plot.plot_1d_init()
 # and for tau, we use +16000 to move the signa to frequency origin
 # so the signal has the frequency ~(+16000, -16000)
 pymod_data.plot_signal_2d( time, grid, data, func, ax, padding=[0.0, 0.0],
-                           w_shift=[-16000.0, +16000.0], obj='s', t0=[0,0] )
+                           w_shift=[-16000.0, +16000.0], obj='p', t0=[0,0] )
 pymod_plot.plot_show( ax,
                       xlabel=r"Freq. for detection $t$ (cm$^{-1}$)",
                       ylabel=r"Freq. for coherence $\tau$ (cm$^{-1}$)",

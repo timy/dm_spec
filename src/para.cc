@@ -6,6 +6,7 @@
 #include "esmb.h"
 #include "mvar.h"
 #include "mpic.h"
+#include "node.h"
 #include "coord.h"
 #include "repr.h"
 #include "bath.h"
@@ -51,7 +52,8 @@ void para_ini( parameters *ps, const char* dirBase, long size, long rank )
     para_time_ini( &cfg, ps );
     para_esmb_ini( &cfg, ps );
     para_mvar_ini( &cfg, ps );
-    para_mpic_ini( ps, size, rank );
+    para_mpic_ini( &cfg, ps, size, rank );
+    para_node_ini( &cfg, ps );
     para_coord_ini( &cfg, ps );
     para_repr_ini( &cfg, ps );
     para_bath_ini( &cfg, ps );
@@ -75,6 +77,7 @@ void para_del( parameters *ps )
     para_bath_del( ps );
     para_repr_del( ps );
     para_coord_del( ps );
+    para_node_del( ps );
     para_mpic_del( ps );
     para_mvar_del( ps );
     para_esmb_del( ps );

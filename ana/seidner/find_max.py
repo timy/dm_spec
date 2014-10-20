@@ -2,7 +2,8 @@ import sys
 sys.path.append( '../../pkg' )
 import pymod_data
 
-nOrder, nt = 3, 960
+# nOrder: 1 to the 1st-order; 2 to the 3rd-order; 3 to the 5th-order
+nOrder, nt = 2, 960
 order, idxDir, idxStart = pymod_data.readDirIndex('../../cfg/index.json')
 
 for iOrder in range(nOrder):

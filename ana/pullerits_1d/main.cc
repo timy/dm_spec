@@ -183,7 +183,7 @@ void ppar_extract_pullerits_0( complex*** ppar_1d_0, parameters* ps )
     // loop over all samples in all files from MPI nodes
     for (int rank = 0; rank < N_NODE; rank ++) {
         para_mpic_set( ps, N_NODE, rank );
-        int ns = ps->mpic->njob;
+        int ns = ps->node->n_esmb;
         fprintf( stdout, "rank = %d: njob = %d\n", rank, ns );
 
         int file_idx[1] = { rank };
@@ -251,7 +251,7 @@ void ppar_extract_pullerits_1( complex*** ppar_1d_0, complex*** ppar_1d_1,
     
     for (int rank = 0; rank < N_NODE; rank ++) {
         para_mpic_set( ps, N_NODE, rank );
-        int ns = ps->mpic->njob;
+        int ns = ps->node->n_esmb;
         fprintf( stdout, "rank = %d: njob = %d\n", rank, ns );
         
         int file_idx[1] = { rank };

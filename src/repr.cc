@@ -49,7 +49,6 @@ void para_repr_del( parameters *ps )
     delete ps->repr;
 }
 
-#include <libconfig.h>
 #include <cstring>
 void para_repr_config( struct config_t* cfg, struct parameters* ps )
 {

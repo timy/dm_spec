@@ -21,7 +21,7 @@ complex*** prepare_pol_array( int dim, parameters *ps )
 {
     long n_grid = ps->nt; // 1d
     if (ps->mvar->dimGrid == 1 && dim == 2)
-        n_grid *= (ps->mpic->njob); // 2d
+        n_grid *= (ps->node->n_mvar); // 2d
 
     complex*** pol = NULL;
     try {
@@ -41,7 +41,7 @@ void clean_pol_array( int dim, complex ***pol, parameters *ps )
 {
     long n_grid = ps->nt; // 1d
     if (ps->mvar->dimGrid == 1 && dim == 2)
-        n_grid *= (ps->mpic->njob); // 2d
+        n_grid *= (ps->node->n_mvar); // 2d
 
     for (long i_grid = 0; i_grid < n_grid; i_grid ++) {
         for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {

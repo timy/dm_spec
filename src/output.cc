@@ -202,7 +202,7 @@ void io_rl_read( parameters* ps ) {
 ////////////////////////////////////////////////////////////
 //              Specification of file format
 // column no.=1: variable, user-defined all extra dimensions
-// row no.=ps->mpic->njob. njob is decided by system
+// row no.=ps->node->n_mvar. node->n_mvar is decided by system
 ////////////////////////////////////////////////////////////
 
 void io_grid_write( para_file::file_type type, double *s,
@@ -210,7 +210,7 @@ void io_grid_write( para_file::file_type type, double *s,
 {
     int file_idx[1] = { (int) ps->mpic->rank };
     open_para_file( type, prefix, ps, 1, NULL, file_idx, "w" );
-    for (long is = 0; is < ps->mpic->njob; is ++)
+    for (long is = 0; is < ps->node->n_mvar; is ++)
         fprintf( ps->file->item[type]->f[0]->fptr, "%le\n", s[is] );
     close_para_file( type, ps );
 }
@@ -220,7 +220,7 @@ void io_grid_read( para_file::file_type type, double *s,
 {
     int file_idx[1] = { (int) ps->mpic->rank };
     open_para_file( type, prefix, ps, 1, NULL, file_idx, "r" );
-    for (long is = 0; is < ps->mpic->njob; is ++) {
+    for (long is = 0; is < ps->node->n_mvar; is ++) {
         long index = ps->mpic->idx0 + is;
         fscanf( ps->file->item[type]->f[0]->fptr, "%le", &s[index] );
     }
@@ -241,7 +241,7 @@ void io_pol_write( para_file::file_type type, complex*** pol, parameters* ps )
     // output only the real part to save half storage, then column no.=1
     // but when one needs post-process, one output both the real & imag parts
     int idx[2]; // { i_dpl, i_dim }
-    long ns = ps->mpic->njob;
+    long ns = ps->node->n_mvar;
     for (int is = 0; is < ns; is ++)
         for (int it = 0; it < ps->nt; it ++) {
             long index = is * (ps->nt) + it;
@@ -263,7 +263,7 @@ void io_pol_read( para_file::file_type type, complex*** pol, parameters* ps )
     // notice the pullerits' method one can read only a single column
     int idx[2];
     double re, im;
-    long ns = ps->mpic->njob;
+    long ns = ps->node->n_mvar;
     long idx0 = ps->mpic->idx0;
     if ( ps->esmb->with_old == 1 )
         idx0 = 0;

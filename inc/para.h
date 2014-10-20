@@ -107,6 +107,17 @@ struct para_mpic
     long rank; // rank of the current unit
     long njob; // number of job for the current unit
     long idx0; // first index for the current unit
+
+    enum {
+        GRID,
+        ESMB
+    } partition;
+};
+
+struct para_node
+{
+    long n_esmb;
+    long n_mvar;
 };
 
 typedef struct _IO_FILE FILE;
@@ -245,6 +256,7 @@ struct parameters
     struct para_esmb *esmb;
     struct para_mvar *mvar;
     struct para_mpic *mpic;
+    struct para_node *node;
     struct para_file *file;
     struct para_seidner *seid;
     struct para_help *help;

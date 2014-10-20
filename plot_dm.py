@@ -63,27 +63,20 @@ dat = {
     "Rr0n0":data[:,0],
     "Rr1n1":data[:,1],
     "Rr2n2":data[:,2],
-    "Rr3n3":data[:,3],
-    "Rr1n0":data[:,4],
-    "Ir1n0":data[:,5],
-    "Rr2n0":data[:,6],
-    "Ir2n0":data[:,7],
-    "Rr3n1":data[:,8],
-    "Ir3n1":data[:,9],
-    "Rr3n2":data[:,10],
-    "Ir3n2":data[:,11],
-    "Rr1n2":data[:,12],
-    "Ir1n2":data[:,13],
-    "Rr3n0":data[:,14],
-    "Ir3n0":data[:,15]
+    "Rr1n0":data[:,3],
+    "Ir1n0":data[:,4],
+    "Rr2n0":data[:,5],
+    "Ir2n0":data[:,6],
+    "Rr2n1":data[:,7],
+    "Ir2n1":data[:,8]
 }
 
-#idx = ["Rr3n1", "Rr3n0", "Rr1n2"]
-idx = ["Rr0n0", "Rr1n1", "Rr2n2", "Rr3n3"]
+idx = ["Rr1n1", "Rr2n2"]
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 handle = []
+# handle.append( ax.plot( t, dat["Rr0n0"]+dat["Rr1n1"]+dat["Rr2n2"] ) )
 for i in idx:
     handle.append( ax.plot( t, dat[i], marker='.' )[0] )
 #    handle.append( ax.plot( t, np.log10( np.abs( dat[i] ) ) )[0] )

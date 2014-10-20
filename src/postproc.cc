@@ -14,7 +14,7 @@ void postproc_collect_mpi_grid( int n_node, const char* dirBase )
 {
     parameters ps; ps.f_eom = NULL;
     para_ini( &ps, dirBase );
-    double* grid = new double [ps.mpic->njob];
+    double* grid = new double [ps.node->n_mvar];
     for (int rank = 0; rank < n_node; rank ++) {
         parameters ps1; ps1.f_eom = NULL;
         para_ini( &ps1, dirBase, n_node, rank );

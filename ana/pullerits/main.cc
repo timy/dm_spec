@@ -105,7 +105,7 @@ struct st_par {
 void loopAssign_1( complex*** pol_0,
                    void (*func)( complex&, st_par* ),
                    st_par* par, parameters* ps ) {
-    for (long is = 0; is < ps->mpic->njob; is ++)
+    for (long is = 0; is < ps->node->n_mvar; is ++)
         for (long it = 0; it < ps->nt; it ++) {
             long index = (ps->mpic->idx0 + is) * (ps->nt) + it;
             for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)
@@ -118,7 +118,7 @@ void loopAssign_1( complex*** pol_0,
 void loopAssign_2( complex*** pol_0, complex*** pol_1,
                    void (*func)( complex&, complex&, st_par* ),
                    st_par* par, parameters* ps ) {
-    for (long is = 0; is < ps->mpic->njob; is ++)
+    for (long is = 0; is < ps->node->n_mvar; is ++)
         for (long it = 0; it < ps->nt; it ++) {
             long index = (ps->mpic->idx0 + is) * (ps->nt) + it;
             for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++)

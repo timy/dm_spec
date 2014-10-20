@@ -27,7 +27,7 @@ void mvar_output_grid( para_file::file_type type, parameters *ps );
 //     gsl_rng_set( (gsl_rng*) ps->esmb->rng, ps->mpic->rank + 1 );
 
 //     long i_esmb_0 = ps->mpic->idx0;
-//     long i_esmb_1 = i_esmb_0 + ps->mpic->njob;
+//     long i_esmb_1 = i_esmb_0 + ps->node->n_esmb;
 
 //     // fprintf( stdout, "rank=%-3ld, i_esmb_0=%-6ld, i_esmb_1=%-6ld\n",
 //     //          ps->mpic->rank, i_esmb_0, i_esmb_1 );
@@ -64,7 +64,7 @@ void mvar_output_grid( para_file::file_type type, parameters *ps );
 #include <stdexcept>
 void mvar_calc_grid_seidner( parameters *ps )
 {
-    long ns = ps->mpic->njob;
+    long ns = ps->node->n_mvar;
     long nt = ps->nt;
 
     // 2d array: n_phase * (ns * nt) * n_dim
@@ -129,7 +129,7 @@ void mvar_calc_grid_seidner( parameters *ps )
 
 void mvar_calc_grid( parameters *ps )
 {
-    long ns = ps->mpic->njob;
+    long ns = ps->node->n_mvar;
     long nt = ps->nt;
 
     gsl_rng_set( (gsl_rng*) ps->esmb->rng, 1 );
@@ -193,6 +193,7 @@ void para_mvar_config( config_t* cfg, parameters* ps )
     // may need units conversion!!!
     ps->mvar->y0 *= C_fs2au;
     ps->mvar->y1 *= C_fs2au;
+    // TODO: mvar->dimGrid should be set in a smarter way!!!
 }
 
 void para_mvar_update( parameters* ps )
@@ -214,14 +215,15 @@ void mvar_update( long is, long i_esmb, parameters *ps )
 
     // // population time
     double tau = ps->ef[1] - ps->ef[0];
-    ps->ef[1]->tc = 0.0 - y;
+    // ps->ef[1]->tc = 0.0 - y;
+    ps->ef[1]->tc = - 50.0 - y;
     ps->ef[0]->tc = ps->ef[1]->tc - tau;
 }
 
 void mvar_output_grid( para_file::file_type type, parameters *ps )
 {
-    double *s = new double[ps->mpic->njob];
-    for (long is = 0; is < ps->mpic->njob; is ++) {
+    double *s = new double[ps->node->n_mvar];
+    for (long is = 0; is < ps->node->n_mvar; is ++) {
         s[is] = ps->mvar->y0 + (ps->mpic->idx0 + is) * ps->mvar->dy;
         s[is] /= C_fs2au;
     }
