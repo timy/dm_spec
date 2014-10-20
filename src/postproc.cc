@@ -12,12 +12,19 @@
 
 void postproc_collect_mpi_grid( int n_node, const char* dirBase )
 {
-    parameters ps; ps.f_eom = NULL;
+    parameters ps;
     para_ini( &ps, dirBase );
     double* grid = new double [ps.node->n_mvar];
-    for (int rank = 0; rank < n_node; rank ++) {
-        parameters ps1; ps1.f_eom = NULL;
-        para_ini( &ps1, dirBase, n_node, rank );
+
+    int size = 0;
+    if (ps.mpic->partition == para_mpic::GRID) {
+        size = n_node;
+    } else if (ps.mpic->partition == para_mpic::ESMB) {
+        size = 1;
+    }
+    for (int rank = 0; rank < size; rank ++) {
+        parameters ps1;
+        para_ini( &ps1, dirBase, size, rank );
         ps1.esmb->with_old = 0;
         io_grid_read( para_file::GRID_2D, grid, dirBase, &ps1 );
         para_del( &ps1 );

@@ -98,7 +98,6 @@ struct para_mvar
     double y0;
     double y1;
     double dy;
-    int dimGrid;
 };
 
 struct para_mpic

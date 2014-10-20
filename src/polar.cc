@@ -19,10 +19,7 @@ void ptot_from_dm_7lv( complex* pol_M, double* rho, parameters *ps );
 #include <exception>
 complex*** prepare_pol_array( int dim, parameters *ps )
 {
-    long n_grid = ps->nt; // 1d
-    if (ps->mvar->dimGrid == 1 && dim == 2)
-        n_grid *= (ps->node->n_mvar); // 2d
-
+    long n_grid = ps->nt * ps->node->n_mvar;
     complex*** pol = NULL;
     try {
         pol = new complex** [n_grid];
@@ -39,10 +36,7 @@ complex*** prepare_pol_array( int dim, parameters *ps )
 
 void clean_pol_array( int dim, complex ***pol, parameters *ps )
 {
-    long n_grid = ps->nt; // 1d
-    if (ps->mvar->dimGrid == 1 && dim == 2)
-        n_grid *= (ps->node->n_mvar); // 2d
-
+    long n_grid = ps->nt * ps->node->n_mvar;
     for (long i_grid = 0; i_grid < n_grid; i_grid ++) {
         for (int i_dpl = 0; i_dpl < ps->pols->n_dpl; i_dpl ++) {
             delete[] pol[i_grid][i_dpl];

@@ -153,7 +153,6 @@ void output_info( para_file::file_type type, parameters* ps )
     print_info( file, ps->mvar->y0 );
     print_info( file, ps->mvar->y1 );
     print_info( file, ps->mvar->dy );
-    print_info( file, ps->mvar->dimGrid );
     print_info( file, ps->esmb->n_esmb );
 
     display_section( file, "mpic" );

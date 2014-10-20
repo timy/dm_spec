@@ -29,12 +29,10 @@ void para_mpic_set( parameters *ps, long size, long rank )
     ps->mpic->rank = rank;
 
     long n_total;
-    if (ps->mpic->partition == para_mpic::GRID) { // TODO: dimGrid is not relevant!!!
+    if (ps->mpic->partition == para_mpic::GRID) {
         n_total = ps->mvar->ny;
-        ps->mvar->dimGrid = 1;
     } else if (ps->mpic->partition == para_mpic::ESMB) {
         n_total = ps->esmb->n_esmb;
-        ps->mvar->dimGrid = 0;
     }
 
     ps->mpic->njob = assign_jobs( ps->mpic->rank, ps->mpic->size,

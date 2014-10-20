@@ -88,12 +88,17 @@ void mvar_calc_grid_seidner( parameters *ps )
     complex ****ppar_1d = prepare_pol_array_seidner( 1, ps );
     complex ****ptot_1d = prepare_pol_array_seidner( 1, ps );
 
-    gsl_rng_set( (gsl_rng*) ps->esmb->rng, 4 );
-    gsl_rng_set( (gsl_rng*) ps->seid->rng, 4 );
+    if (ps->mpic->partition == para_mpic::GRID) { // same seeds for esmb
+        gsl_rng_set( (gsl_rng*) ps->esmb->rng, 4 );
+        gsl_rng_set( (gsl_rng*) ps->seid->rng, 4 );
+    } else if (ps->mpic->partition == para_mpic::ESMB) { // diff seeds for esmb
+        gsl_rng_set( (gsl_rng*) ps->esmb->rng, ps->mpic->rank );
+        gsl_rng_set( (gsl_rng*) ps->seid->rng, ps->mpic->rank );
+    }
 
-    for (long i_esmb = 0; i_esmb < ps->esmb->n_esmb; i_esmb ++) {
+    for (long i_esmb = 0; i_esmb < ps->node->n_esmb; i_esmb ++) {
         para_esmb_update( i_esmb, ps );
-        for (long is = 0; is < ns; is ++) {
+        for (long is = 0; is < ps->node->n_mvar; is ++) {
             mvar_update( is, i_esmb, ps );
             calc_ptot_seidner( ptot_1d, ps );
             calc_ppar_seidner( ppar_1d, ptot_1d, ps );
@@ -113,7 +118,7 @@ void mvar_calc_grid_seidner( parameters *ps )
         if (ps->mpic->rank == 0)
             if (i_esmb % 10 == 0)
                 fprintf( stdout, "Finished sample number: %ld of %ld\n",
-                         i_esmb, ps->esmb->n_esmb );
+                         i_esmb, ps->node->n_esmb );
     }
 
     clean_pol_array_seidner( 1, ppar_1d, ps );
@@ -193,7 +198,6 @@ void para_mvar_config( config_t* cfg, parameters* ps )
     // may need units conversion!!!
     ps->mvar->y0 *= C_fs2au;
     ps->mvar->y1 *= C_fs2au;
-    // TODO: mvar->dimGrid should be set in a smarter way!!!
 }
 
 void para_mvar_update( parameters* ps )
