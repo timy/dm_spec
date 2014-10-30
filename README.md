@@ -167,6 +167,15 @@ The current format in each line for energy and dipole data are as following,
   should agree with `n_dpl` defined in [parameters.cfg](cfg/parameters.cfg#L4).
   If not, function [cdf_read](src/cdf.cc#L75-78) will complain.
 
+## Redfield Tensor
+
+the following restrictions are imposed, but can be extended for further work:
+
+- real part of half-sided Fourier transform of bath correlation function (neglect Lamb shift) that the tensors are all real.
+
+- secular approximation; for `R[m][n][k][l]`, only for population transfer (m=n, k=l) and coherence dephasing (m=k, n=l). Both the EOMs and redfield tensor generator only consider these terms. Going beyond the secular approximation, the `exp( i (E_mn - E_kl) )` should be multiplied that the tensor becomes complex variable, the population terms formally are not real (although physically they are).
+
+- the system operators, which requires representation transform, is not yet fully implemented. Here only consider the system coordinate directly defined in each electronic state, there is no overlapping between electronic states for Redfield relaxation: delta function is used, only consider terms r==l==n && s==m==k. Indices (l, n) and (m, k) are for spectral representation, r and s are indices for basis of representation where the system operator for coupling is defined. E.g., if the system operator S is defined in local site representation labeled by `r`, after transformation, it becomes `S_ln` in spectral representation, `S_ln = sum_{ll,nn}( S_{ll,nn} * c_ll^l* c_nn^n )`, where `c_ll^l` and `c_nn^n` are coefficients for representation transform between local site (basis labeled by `ll`) and exciton representation (basis labeled by `l`). If the basis between site and exciton ones are not orthogonal, overlapping leads to population transfer between states in the spectral representation.
 
 # TODO List
 
@@ -189,4 +198,3 @@ The current format in each line for energy and dipole data are as following,
   * 5-order -> 3-order, remember to use 5th order for calculation.
   * n_esmb = 40000
 - src/Makefile: flag DUSE_MPI
-- src/redfield.cc: n_site should be modified
