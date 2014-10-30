@@ -1,6 +1,9 @@
 #include "eom.h"
 #include "para.h"
 
+#include "complex.h"
+#include "debug.h"
+
 void equation_of_motion_ini( para_eom* peom )
 {
     parameters *ps = peom->ps;
@@ -8,7 +11,6 @@ void equation_of_motion_ini( para_eom* peom )
     peom->Ir = new double* [ps->n_lvl];
     peom->w  = new double* [ps->n_lvl];
     peom->V  = new double* [ps->n_lvl];
-    peom->R  = new double* [ps->n_lvl];
     peom->ef = new double [ps->n_pulse];
 
     peom->y  = new double [ps->n_eom];
@@ -18,7 +20,6 @@ void equation_of_motion_ini( para_eom* peom )
         peom->Ir[i] = new double [i+1]; // more than actual use by 1
         peom->w[i] = new double [i+1];  // more than actual use by 1
         peom->V[i] = new double [i+1];  // more than actual use by 1
-        peom->R[i] = new double [ps->n_lvl];
     }
     // freq diff
     for (int i = 1; i < ps->n_lvl; i ++)
@@ -26,9 +27,25 @@ void equation_of_motion_ini( para_eom* peom )
             peom->w[i][j] = ps->energy->energy[i] - ps->energy->energy[j];
 
     // dissipations
-    for (int i = 0; i < ps->n_lvl; i ++)
-        for (int j = 0; j < ps->n_lvl; j ++)
-            peom->R[i][j] = 0.0;
+    peom->R  = new double*** [ps->n_lvl];
+    for (int m = 0; m < ps->n_lvl; m ++) {
+        peom->R[m] = new double** [ps->n_lvl];
+        for (int n = 0; n < ps->n_lvl; n ++) {
+            peom->R[m][n] = new double* [ps->n_lvl];
+            for (int k = 0; k < ps->n_lvl; k ++) {
+                peom->R[m][n][k] = new double [ps->n_lvl];
+            }
+        }
+    }
+    for (int m = 0; m < ps->n_lvl; m ++) {
+        for (int n = 0; n < ps->n_lvl; n ++) {
+            for (int k = 0; k < ps->n_lvl; k ++) {
+                for (int l = 0; l < ps->n_lvl; l ++)
+                    peom->R[m][n][k][l] = real( ps->bath->redfield_tensor[m][n][k][l] );
+            }
+        }
+    }
+
     // y
     peom->y[0] = 1.0;
     for (int i = 1; i < ps->n_eom; i ++)
@@ -38,14 +55,23 @@ void equation_of_motion_ini( para_eom* peom )
 void equation_of_motion_del( para_eom* peom )
 {
     parameters *ps = peom->ps;
+    for (int m = 0; m < ps->n_lvl; m ++) {
+        for (int n = 0; n < ps->n_lvl; n ++) {
+            for (int k = 0; k < ps->n_lvl; k ++) {
+                delete[] peom->R[m][n][k];
+            }
+            delete[] peom->R[m][n];
+        }
+        delete[] peom->R[m];
+    }
+    delete[] peom->R;
+
     for (int i = 0; i < ps->n_lvl; i ++) {
-        delete[] peom->R[i];
         delete[] peom->V[i];  delete[] peom->w[i];
         delete[] peom->Ir[i]; delete[] peom->Rr[i];
     }
     delete[] peom->y;
     delete[] peom->ef;
-    delete[] peom->R;
     delete[] peom->V; delete[] peom->w; delete[] peom->Ir; delete[] peom->Rr;
 }
 

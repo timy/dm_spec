@@ -1,6 +1,10 @@
 #include "para.h"
 #include "bath.h"
+#include "complex.h"
 #include <cmath>
+#include "debug.h"
+
+#define complex std::complex<double>
 
 void prepare_bath_para( parameters *ps );
 
@@ -9,12 +13,36 @@ void para_bath_config( struct config_t* cfg, struct parameters *ps );
 void para_bath_ini( config_t* cfg, parameters *ps )
 {
     ps->bath = new para_bath;
+
+    // TODO: add flag if Redfield tensor is used
+    ps->bath->redfield_tensor = new complex*** [ps->n_lvl];
+    for (int m = 0; m < ps->n_lvl; m ++) {
+        ps->bath->redfield_tensor[m] = new complex** [ps->n_lvl];
+        for (int n = 0; n < ps->n_lvl; n ++) {
+            ps->bath->redfield_tensor[m][n] = new complex* [ps->n_lvl];
+            for (int k = 0; k < ps->n_lvl; k ++) {
+                ps->bath->redfield_tensor[m][n][k] = new complex [ps->n_lvl];
+            }
+        }
+    }
     para_bath_config( cfg, ps );
     set_para_bath( ps );
 }
 
 void para_bath_del( parameters *ps )
 {
+    // TODO: add flag if Redfield tensor is used
+    for (int m = 0; m < ps->n_lvl; m ++) {
+        for (int n = 0; n < ps->n_lvl; n ++) {
+            for (int k = 0; k < ps->n_lvl; k ++) {
+                delete[] ps->bath->redfield_tensor[m][n][k];
+            }
+            delete[] ps->bath->redfield_tensor[m][n];
+        }
+        delete[] ps->bath->redfield_tensor[m];
+    }
+    delete[] ps->bath->redfield_tensor;
+
     delete ps->bath;
 }
 
@@ -36,14 +64,12 @@ void set_para_bath( parameters *ps )
 double spectral_density_J( double w, parameters *ps )
 {
     double g2 = (ps->bath->g) * (ps->bath->g);
-    double J = g2 * w / (ps->bath->w_cut) * exp( -w / (ps->bath->w_cut) );
-    return J;
+    return g2 * w / (ps->bath->w_cut) * exp( -w / (ps->bath->w_cut) );
 }
 
-double boson_n( double w, parameters *ps )
+double distribution_boson_n( double w, parameters *ps )
 {
-    double bsn = 1.0 / ( exp( w / ( (ps->bath->T) ) ) - 1.0 );
-    return bsn;
+    return 1.0 / ( exp( w / ( (ps->bath->T) ) ) - 1.0 );
 }
 
 // real part of Fourier transform of the correlation function
@@ -53,9 +79,9 @@ double re_FT_CF( double w, parameters *ps )
     if ( fabs(w) < 1e-6 )
         re_FTCF = (ps->bath->g) * (ps->bath->g) * (ps->bath->T) / (ps->bath->w_cut);
     else if ( w > 0.0 )
-        re_FTCF = boson_n( w, ps ) * spectral_density_J( w, ps );
+        re_FTCF = distribution_boson_n( w, ps ) * spectral_density_J( w, ps );
     else // w < 0.0
-        re_FTCF = (1.0 + boson_n( -w, ps )) * spectral_density_J( -w, ps );
+        re_FTCF = (1.0 + distribution_boson_n( -w, ps )) * spectral_density_J( -w, ps );
     return re_FTCF;
 }
 
@@ -65,6 +91,9 @@ double bath_gamma( double w, parameters *ps )
     double gm = s * s * re_FT_CF( w, ps );
     return gm;
 }
+
+
+#include "redfield.h"
 
 void prepare_bath_para( parameters *ps )
 {
@@ -88,4 +117,6 @@ void prepare_bath_para( parameters *ps )
     ps->bath->G31 = GmRate21 + 0.5 * ps->bath->g21;
     ps->bath->G32 = GmRate21 + 0.5 * ps->bath->g12;
     ps->bath->G30 = GmRate20;
+
+    redfield_tensor_stationary( ps );
 }

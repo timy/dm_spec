@@ -76,7 +76,8 @@ idx = ["Rr1n1", "Rr2n2"]
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 handle = []
-# handle.append( ax.plot( t, dat["Rr0n0"]+dat["Rr1n1"]+dat["Rr2n2"] ) )
+ # handle.append( ax.plot( t, dat["Rr0n0"]+dat["Rr1n1"]+dat["Rr2n2"] ) )
+ # handle.append( ax.plot( t, dat["Rr0n0"] ) )
 for i in idx:
     handle.append( ax.plot( t, dat[i], marker='.' )[0] )
 #    handle.append( ax.plot( t, np.log10( np.abs( dat[i] ) ) )[0] )

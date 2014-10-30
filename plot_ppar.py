@@ -12,7 +12,7 @@ t = np.loadtxt( "res/time.dat" )
 data = np.loadtxt( "res/ppar_1d_dpl0_coo2_37_0.dat" )
 label = '[-1, 1, 1]'
 pymod_data.plot_signal_1d( t, data, func, handle, legend, ax,
-                           obj='s', t0=-100, lim=[-300.0, 546],
+                           obj='p', t0=-100, lim=[-300.0, 546],
                            lbl=label, padding=10.0, w_shift=16000. )
 
 pymod_plot.plot_show( ax, handle=handle, legend=legend,

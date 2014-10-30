@@ -218,10 +218,10 @@ void mvar_update( long is, long i_esmb, parameters *ps )
     // ps->ef[0]->tc = ps->ef[1]->tc - y;
 
     // // population time
-    double tau = ps->ef[1] - ps->ef[0];
-    // ps->ef[1]->tc = 0.0 - y;
-    ps->ef[1]->tc = - 50.0 - y;
-    ps->ef[0]->tc = ps->ef[1]->tc - tau;
+    // double tau = ps->ef[1] - ps->ef[0];
+    // // ps->ef[1]->tc = 0.0 - y;
+    // ps->ef[1]->tc = - 50.0 - y;
+    // ps->ef[0]->tc = ps->ef[1]->tc - tau;
 }
 
 void mvar_output_grid( para_file::file_type type, parameters *ps )

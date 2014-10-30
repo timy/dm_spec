@@ -3,7 +3,7 @@ double**    Rr = ((para_eom*) peom)->Rr;
 double**    Ir = ((para_eom*) peom)->Ir;
 double**    w  = ((para_eom*) peom)->w;
 double**    V  = ((para_eom*) peom)->V;
-double**    R  = ((para_eom*) peom)->R;
+double****  R  = ((para_eom*) peom)->R;
 double*     ef = ((para_eom*) peom)->ef;
 
 // population

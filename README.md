@@ -179,3 +179,14 @@ The current format in each line for energy and dipole data are as following,
 - [x] CDF may use absolute path, so I cannot use it in subdir, adjust this.
 - [ ] index with JSON format
 - [ ] parameters with JSON format
+
+
+# FIXME
+
+(2014/10/29)
+- mvar.cc: mvar_update remember to update the time intervals properly.
+- parameters.cfg:
+  * 5-order -> 3-order, remember to use 5th order for calculation.
+  * n_esmb = 40000
+- src/Makefile: flag DUSE_MPI
+- src/redfield.cc: n_site should be modified

@@ -41,6 +41,8 @@ struct para_bath
     double G31;
     double G32;
     double G30;
+
+    std::complex<double>**** redfield_tensor;
 };
 
 struct para_repr

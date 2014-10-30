@@ -21,19 +21,19 @@ void prop( para_eom *peom )
 
     switch (ps->n_lvl) {
     case 2:
-        ps->f_eom = equation_of_motion_run_2;
+        // ps->f_eom = equation_of_motion_run_2;
         break;
     case 3:
         ps->f_eom = equation_of_motion_run_3;
         break;
     case 4:
-        ps->f_eom = equation_of_motion_run_4;
+        // ps->f_eom = equation_of_motion_run_4;
         break;
     case 5:
-        ps->f_eom = equation_of_motion_run_5;
+        // ps->f_eom = equation_of_motion_run_5;
         break;
     case 6:
-        ps->f_eom = equation_of_motion_run_6;
+        // ps->f_eom = equation_of_motion_run_6;
         break;
     default:
         error( ps, "No implementation is found for n_lvl = %d", ps->n_lvl );

@@ -16,8 +16,7 @@ struct para_eom
     double** w;
     double** V;
     double*  ef;
-    double** R;
-
+    double**** R;
     double*  y;
 };
 
