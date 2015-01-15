@@ -8,6 +8,21 @@
 #define complex std::complex<double>
 #define EYE complex( 0.0, 1.0 )
 
+void output_redfield_tensor( FILE* file, parameters *ps )
+{
+    for (int m = 0; m < ps->n_lvl; m ++) {
+        for (int n = 0; n < ps->n_lvl; n ++) {
+            for (int k = 0; k < ps->n_lvl; k ++) {
+                for (int l = 0; l < ps->n_lvl; l ++) {
+                    fprintf( file, "R(%d %d <- %d %d): %e + i %e\n", m, n, k, l,
+                            real(ps->bath->redfield_tensor[m][n][k][l]),
+                            imag(ps->bath->redfield_tensor[m][n][k][l]) );
+                }
+            }
+        }
+    }
+}
+
 void output_mol_orient( FILE* file, parameters *ps )
 {
     double phi = ps->coord->phi;
@@ -124,24 +139,6 @@ void output_info( para_file::file_type type, parameters* ps )
             print_info( file, ps->dipole->dipole[i][j] );
     for (int i = 0; i < ps->n_dim; i ++)
         print_info( file, ps->pos[i] );
-
-    display_section( file, "bath" );
-    print_info( file, ps->bath->g );
-    print_info( file, ps->bath->w_cut/C_cm2au );
-    print_info( file, ps->bath->T/C_T2au );
-    print_info( file, ps->bath->g12 );
-    print_info( file, ps->bath->g21 );
-    print_info( file, ps->bath->G11 );
-    print_info( file, ps->bath->G22 );
-    print_info( file, ps->bath->G12 );
-    print_info( file, ps->bath->G10 );
-    print_info( file, ps->bath->G20 );
-    print_info( file, ps->bath->G31 );
-    print_info( file, ps->bath->G32 );
-    print_info( file, ps->bath->G30 );
-
-    display_section( file, "repr" );
-    print_info( file, ps->repr->theta );
 
     display_section( file, "coord" );
     print_info( file, ps->coord->phi/M_PI );

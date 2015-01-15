@@ -42,6 +42,12 @@ struct para_bath
     double G32;
     double G30;
 
+    enum {
+        CONST_REDFIELD_FILE,
+        CONST_REDFIELD_CALC,
+        CONST_DIMER
+    } type;
+
     std::complex<double>**** redfield_tensor;
 };
 

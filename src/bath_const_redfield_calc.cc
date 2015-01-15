@@ -28,9 +28,6 @@ void bath_set_const_redfield_calc( parameters* ps )
                 }
 }
 
-
-#include <cstdio>
-
 bool secular_condition( int m, int n, int k, int l, parameters* ps )
 {
     double w_mn = ps->energy->energy[m] - ps->energy->energy[n];
@@ -83,7 +80,7 @@ complex ft_correlation( int r, int s, double w, parameters* ps )
         if (fabs(w) < 1e-6) {
             ftCf = ps->bath->g * ps->bath->g * ps->bath->T / ps->bath->w_cut;
         } else if (w > 0) {
-            ftCf = spectral_density_J( w, ps) * distribution_boson_n( w, ps );
+            ftCf = spectral_density_J( w, ps ) * distribution_boson_n( w, ps );
         } else if (w < 0) {
             ftCf = spectral_density_J( -w, ps ) * ( 1.0 + distribution_boson_n( -w, ps ) );
         }
@@ -98,7 +95,7 @@ void para_bath_const_redfield_calc_config( struct config_t* cfg, struct paramete
 {
     config_lookup_float( cfg, "bath.const_redfield_calc.g", &(ps->bath->g) );
     config_lookup_float( cfg, "bath.const_redfield_calc.w_cut", &(ps->bath->w_cut) );
-    config_lookup_float( cfg, "bath_const_redfield_calc.T", &(ps->bath->T) );
+    config_lookup_float( cfg, "bath.const_redfield_calc.T", &(ps->bath->T) );
     ps->bath->w_cut *= C_cm2au;
     ps->bath->T *= C_T2au;
 }

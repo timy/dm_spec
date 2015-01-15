@@ -5,6 +5,7 @@
 
 void output_info( para_file::file_type type, struct parameters* ps );
 
+void output_redfield_tensor( FILE* file, parameters *ps );
 void output_mol_orient( FILE* file, struct parameters *ps );
 
 void output_ef_kL( FILE* file, struct parameters *ps );

@@ -18,8 +18,8 @@ Before starting up, you need to set `Makefile.in` to make sure it is compilable.
 The options to check are `CC`, `CFLAGS` and `LFLAGS`.
 The program requires following dependencies,
 * BLAS and LAPACK - Matrix inverse is used for Seidner's method
-* GSL - Too lazy to write my own ODE solver
-* MPICH2 - neither am I that patient to wait for results...
+* GSL - ODE solver
+* MPICH2
 * libconfig - used to read [parameters.cfg](cfg/parameters.cfg) with nice format.
   But probably I will try JSON soon.
 
@@ -184,7 +184,7 @@ the following restrictions are imposed, but can be extended for further work:
     [energy.cfg](cfg/energy.cfg), [dipole.cfg](cfg/dipole.cfg) and
     [parameters.cfg](cfg/parameters.cfg)
   - 2D calcuation: loop over tau is changed to loop over T in [mvar.cc](src/mvar.cc#L213-218)
-- [ ] add dacay rate for new ODE
+- [x] add dacay rate for new ODE
 - [x] CDF may use absolute path, so I cannot use it in subdir, adjust this.
 - [ ] index with JSON format
 - [ ] parameters with JSON format

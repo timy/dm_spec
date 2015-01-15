@@ -9,7 +9,9 @@ DIR_ANA		=	$(DIR_BASE)/ana
 DIR_ANA_SUB	=	seidner pullerits
 
 SRC_CORE	=	\
-        para.cc rotation.cc coord.cc bath.cc redfield.cc random.cc \
+        para.cc rotation.cc coord.cc \
+        bath.cc bath_const_dimer.cc bath_const_redfield_calc.cc bath_const_redfield_file.cc \
+        random.cc \
         repr.cc repr_generic.cc repr_exciton.cc \
         energy.cc dipole.cc field.cc prop.cc \
         eom_2.cc eom_3.cc eom_4.cc eom_5.cc eom_6.cc \
