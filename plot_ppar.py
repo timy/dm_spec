@@ -9,7 +9,7 @@ ax = pymod_plot.plot_1d_init()
 
 func = np.abs
 t = np.loadtxt( "res/time.dat" )
-data = np.loadtxt( "res/ppar_1d_dpl0_coo2_37_0.dat" )
+data = np.loadtxt( "res/ppar_1d_dpl0_coo2_2_0.dat" )
 label = '[-1, 1, 1]'
 pymod_data.plot_signal_1d( t, data, func, handle, legend, ax,
                            obj='p', t0=-100, lim=[-300.0, 546],
