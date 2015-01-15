@@ -11,10 +11,18 @@ OBJ_CORE	=	$(join $(addsuffix $(DIR_SRC)/, $(dir $(SRC_CORE))), \
 %.o : %.cc
 	$(CC) $< $(CFLAGS) -c -o $@
 
-all : $(EXE)
+all : build_dir $(EXE)
 
 $(EXE) : $(OBJ_CORE) $(OBJ)
 	$(CC) $(OBJ_CORE) $(OBJ) $(LFLAGS) -o $@
+
+build_dir:
+	if [ ! -d "./res" ] ; then \
+		mkdir res; \
+	fi
+	if [ ! -d "./fig" ] ; then \
+		mkdir fig; \
+	fi
 
 clean:
 	$(RM) $(OBJ)
