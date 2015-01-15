@@ -15,11 +15,7 @@ struct para_repr_generic
 };
 
 void para_repr_ini( struct config_t* cfg, struct parameters *ps );
-
 void para_repr_del( struct parameters *ps );
-
-void repr_set_exciton_dimer( struct parameters *ps );
-
-void repr_set_generic( struct parameters *ps );
+void set_para_repr( struct parameters *ps );
 
 #endif

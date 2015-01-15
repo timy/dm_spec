@@ -26,12 +26,12 @@ void para_repr_ini( config_t* cfg, parameters* ps )
         }
         ps->repr->ptrSt = ptr;
         para_repr_generic_config( cfg, ps );
-        repr_set_generic( ps );
     } else if (ps->repr->type == para_repr::DIMER) {
         ps->repr->ptrSt = new para_repr_dimer_local;
         para_repr_dimer_config( cfg, ps );
-        repr_set_exciton_dimer( ps );
     }
+
+    set_para_repr( ps );
 }
 
 void para_repr_del( parameters *ps )
@@ -61,5 +61,17 @@ void para_repr_config( struct config_t* cfg, struct parameters* ps )
     } else {
         fprintf( stderr, "repr.type '%s' unknown. Check "
                  "section 'repr' in your configure file\n", name );
+    }
+}
+
+void repr_set_exciton_dimer( parameters *ps );
+void repr_set_generic( parameters *ps );
+
+void set_para_repr( parameters *ps )
+{
+    if (ps->repr->type == para_repr::GENERIC) {
+        repr_set_generic( ps );
+    } else if (ps->repr->type == para_repr::DIMER) {
+        repr_set_exciton_dimer( ps );
     }
 }

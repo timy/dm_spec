@@ -51,12 +51,7 @@ void para_esmb_update( long i_esmb, parameters *ps )
     // try to output the orientation, let's see results
     // output_mol_orient( ps->file->one[para_file::ORIENT]->fptr, ps );
 
-    if (ps->repr->type == para_repr::GENERIC) {
-        repr_set_generic( ps );
-    } else if (ps->repr->type == para_repr::DIMER) {
-        repr_set_exciton_dimer( ps );
-    }
-
+    set_para_repr( ps );
     set_para_bath( ps );
     set_para_efield_lab( ps );
     set_para_efield_mol( ps );
