@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-data = np.loadtxt("res/dm_ 1.dat")
+data = np.loadtxt("res/dm_1.dat")
 
 idx = ["re_11", "re_22", "re_12"]
 
