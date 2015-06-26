@@ -9,9 +9,8 @@ DIR_ANA		=	$(DIR_BASE)/ana
 DIR_ANA_SUB	=	seidner pullerits
 
 SRC_CORE	=	\
-        para.cc rotation.cc coord.cc \
+        para.cc rotation.cc coord.cc random.cc \
         bath.cc bath_const_dimer.cc bath_const_redfield_calc.cc bath_const_redfield_file.cc \
-        random.cc \
         repr.cc repr_generic.cc repr_exciton.cc \
         energy.cc dipole.cc field.cc prop.cc \
         eom_2.cc eom_3.cc eom_4.cc eom_5.cc eom_6.cc \
@@ -19,31 +18,19 @@ SRC_CORE	=	\
         output.cc position.cc util.cc file.cc esmb.cc mpic.cc \
         pols.cc mvar.cc node.cc config.cc postproc.cc seidner.cc
 
-CC		=	/data1/home/tianmin/software/mpich/bin/mpicxx
-CFLAGS		=	-Wall -O3 -I$(DIR_INC)
-LFLAGS		=	\
-        /data1/home/tianmin/software/mpich/lib/libmpich.a  \
-        /data1/home/tianmin/software/lapack/lib/liblapack.a \
-        /data1/home/tianmin/software/lapack/lib/librefblas.a \
+CC		=	mpicxx
+CFLAGS		=	-Wall -O3 -I$(DIR_INC) #-DUSE_MPI
+LFLAGS		=	-llapack -lgsl -lconfig
+# Instead, you may want to use static libraries
+# LFLAGS		=	\
+        /data1/software/mpich/lib/libmpich.a  \
+        /data1/software/lapack/lib/liblapack.a \
+        /data1/software/lapack/lib/librefblas.a \
         /usr/lib64/gcc/x86_64-suse-linux/4.3/libgfortran.a \
-        /data1/home/tianmin/software/gsl/lib/libgsl.a \
-        -lblas /data1/home/tianmin/software/cblas/lib/cblas_LINUX.a \
-        /data1/home/tianmin/software/libconfig/lib/libconfig.a
-
-# # MPI for lemaitre2
-# CC	=	mpicxx
-# CFLAGS	=	-Wall -O3 -I$(DIR_INC) -DUSE_MPI
-# LFLAGS	=	-L/usr/lib64/atlas -lcblas -lgsl -llapack -lconfig
-
-# # MPI for NIC4
-# CC	=	mpicxx
-# CFLAGS	=	-Wall -O3 -I$(DIR_INC) -DUSE_MPI
-# LFLAGS	=	-L/usr/lib64/atlas -l:libcblas.so.3 -l:liblapack.so.3 \
-#               -lconfig -lgsl
-
-# For my laptop
-# CC		=	g++
-# CFLAGS	=	-Wall -g -I$(DIR_INC)
-# LFLAGS	=	-llapack -lm -lgsl -lconfig
+        /data1/software/gsl/lib/libgsl.a -lblas \
+        /data1/software/cblas/lib/cblas_LINUX.a \
+        /data1/software/libconfig/lib/libconfig.a
+# for NIC4
+# LFLAGS	=	-L/usr/lib64/atlas -l:libcblas.so.3 -l:liblapack.so.3 -lconfig -lgsl
 
 RM		=	rm -f
