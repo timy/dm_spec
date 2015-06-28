@@ -12,24 +12,24 @@
 
 void postproc_collect_mpi_grid( int n_node, const char* dirBase )
 {
-    parameters ps;
-    para_ini( &ps, dirBase );
-    double* grid = new double [ps.node->n_mvar];
+  parameters ps;
+  para_ini( &ps, dirBase );
+  double* grid = new double [ps.node->n_mvar];
 
-    int size = 0;
-    if (ps.mpic->partition == para_mpic::GRID) {
-        size = n_node;
-    } else if (ps.mpic->partition == para_mpic::ESMB) {
-        size = 1;
-    }
-    for (int rank = 0; rank < size; rank ++) {
-        parameters ps1;
-        para_ini( &ps1, dirBase, size, rank );
-        ps1.esmb->with_old = 0;
-        io_grid_read( para_file::GRID_2D, grid, dirBase, &ps1 );
-        para_del( &ps1 );
-    }
-    io_grid_write( para_file::GRID_2D, grid, NULL, &ps );
-    delete[] grid;
-    para_del( &ps );
+  int size = 0;
+  if (ps.mpic->partition == para_mpic::GRID) {
+    size = n_node;
+  } else if (ps.mpic->partition == para_mpic::ESMB) {
+    size = 1;
+  }
+  for (int rank = 0; rank < size; rank ++) {
+    parameters ps1;
+    para_ini( &ps1, dirBase, size, rank );
+    ps1.esmb->with_old = 0;
+    io_grid_read( para_file::GRID_2D, grid, dirBase, &ps1 );
+    para_del( &ps1 );
+  }
+  io_grid_write( para_file::GRID_2D, grid, NULL, &ps );
+  delete[] grid;
+  para_del( &ps );
 }

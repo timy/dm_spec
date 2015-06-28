@@ -5,19 +5,19 @@ namespace std { template<typename T> class complex; }
 
 struct para_eom
 {
-    int iphi;              // index of phi
-    struct parameters *ps; // parameters of system
-    // std::complex<double> **rho;
-    double **rho;
+  int iphi;              // index of phi
+  struct parameters *ps; // parameters of system
+  // std::complex<double> **rho;
+  double **rho;
 
-    // temporary heap object for running eom
-    double** Rr;
-    double** Ir;
-    double** w;
-    double** V;
-    double*  ef;
-    double**** R;
-    double*  y;
+  // temporary heap object for running eom
+  double** Rr;
+  double** Ir;
+  double** w;
+  double** V;
+  double*  ef;
+  double**** R;
+  double*  y;
 };
 
 void equation_of_motion_ini( para_eom* peom );

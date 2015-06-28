@@ -5,13 +5,13 @@
 
 void repr_set_generic( parameters *ps )
 {
-    para_repr_generic* pg = (para_repr_generic*) ps->repr->ptrSt;
-    for (int i_lvl = 0; i_lvl < ps->n_lvl; i_lvl ++)
-        ps->energy->energy[i_lvl] = pg->E[i_lvl]; //+ random_normal() * 200.0 * C_cm2au;
+  para_repr_generic* pg = (para_repr_generic*) ps->repr->ptrSt;
+  for (int i_lvl = 0; i_lvl < ps->n_lvl; i_lvl ++)
+    ps->energy->energy[i_lvl] = pg->E[i_lvl]; //+ random_normal() * 200.0 * C_cm2au;
 
-    for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
-        for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
-            ps->dipole->dipole[i_dpl][i_dim] = pg->mu[i_dpl][i_dim];
+  for (int i_dpl = 0; i_dpl < ps->n_dpl; i_dpl ++)
+    for (int i_dim = 0; i_dim < ps->n_dim; i_dim ++)
+      ps->dipole->dipole[i_dpl][i_dim] = pg->mu[i_dpl][i_dim];
 }
 
 #include <libconfig.h>
@@ -20,29 +20,29 @@ void sscanf_st_dipole( char* buf, int i, parameters* ps );
 
 void para_repr_generic_config( config_t *cfg, parameters* ps )
 {
-    const char* name = NULL;
+  const char* name = NULL;
 
-    config_lookup_string( cfg, "repr.generic.E", &name );
-    cdf_read( name, ps->n_lvl, sscanf_st_energy, ps );
+  config_lookup_string( cfg, "repr.generic.E", &name );
+  cdf_read( name, ps->n_lvl, sscanf_st_energy, ps );
 
-    config_lookup_string( cfg, "repr.generic.mu", &name );
-    cdf_read( name, ps->n_dpl, sscanf_st_dipole, ps );
+  config_lookup_string( cfg, "repr.generic.mu", &name );
+  cdf_read( name, ps->n_dpl, sscanf_st_dipole, ps );
 }
 
 void sscanf_st_energy( char* buf, int i, parameters* ps ) {
-    int* index = ps->energy->index;
-    double* energy = ((para_repr_generic*) ps->repr->ptrSt)->E;
-    int nCol = sscanf( buf, "%d %lf", &(index[i]), &(energy[i]) );
-    energy[i] *= C_cm2au;
-    if (nCol != 2)
-        fprintf( stderr, "CDF warning: suspicous ENERGY data format, nCol=%d\n", nCol );
+  int* index = ps->energy->index;
+  double* energy = ((para_repr_generic*) ps->repr->ptrSt)->E;
+  int nCol = sscanf( buf, "%d %lf", &(index[i]), &(energy[i]) );
+  energy[i] *= C_cm2au;
+  if (nCol != 2)
+    fprintf( stderr, "CDF warning: suspicous ENERGY data format, nCol=%d\n", nCol );
 }
 
 void sscanf_st_dipole( char* buf, int i, parameters* ps ) {
-    int** index = ps->dipole->index;
-    double** dipole = ((para_repr_generic*) ps->repr->ptrSt)->mu;
-    int nCol = sscanf( buf, "%d %d %lf %lf %lf", &(index[i][0]), &(index[i][1]),
-                       &(dipole[i][0]), &(dipole[i][1]), &(dipole[i][2]) );
-    if (nCol != 5)
-        fprintf( stderr, "CDF warning: suspicous DIPOLE data format, nCol=%d\n", nCol );
+  int** index = ps->dipole->index;
+  double** dipole = ((para_repr_generic*) ps->repr->ptrSt)->mu;
+  int nCol = sscanf( buf, "%d %d %lf %lf %lf", &(index[i][0]), &(index[i][1]),
+                     &(dipole[i][0]), &(dipole[i][1]), &(dipole[i][2]) );
+  if (nCol != 5)
+    fprintf( stderr, "CDF warning: suspicous DIPOLE data format, nCol=%d\n", nCol );
 }
